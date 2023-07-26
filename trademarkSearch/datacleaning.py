@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 from lxml import etree
 
+
 # This is used to download files from the USPTO website
 # The downloaded files sometimes don't appear in file structure until the program ends, wait for FILE DOWNLOADS FINISHED
 # This function does all the downloading, unzipping, and cleaning of the files
@@ -85,7 +86,7 @@ def remove_elements(element, tags):
     # Removes a lot of needless information from case-file-header - Might consider removing later
     if element.tag == 'case-file-header':
         for child in list(element):
-            if child.tag != 'filing-date' and child.tag != 'registration-date' and child.tag and 'status-code' and child.tag != 'status-date' and child.tag != 'mark-identification' and child.tag != 'mark-drawing-code':
+            if child.tag != 'filing-date' and child.tag != 'registration-date' and child.tag != 'status-code' and child.tag != 'status-date' and child.tag != 'mark-identification' and child.tag != 'mark-drawing-code':
                 element.remove(child)
 
     # Iterate over a copy of the element's children
@@ -109,6 +110,7 @@ def remove_non_alphabetical(file_path):
     # Write the modified content back to the file
     with open(file_path, 'w') as file:
         file.write(content)
+
 
 # This function will take the original unzipped USPTO XML file and clean it, saving it to a new file
 # Make sure all paths are correct

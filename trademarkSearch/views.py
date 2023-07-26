@@ -5,6 +5,8 @@ from django.http import HttpResponse
 import trademarkSearch.database as db
 import trademarkSearch.textSimilarity as ts
 from trademarkSearch.datacleaning import download_and_process_files
+from trademarkSearch.models import Trademark, make_trademark_objects
+import os
 
 
 # Create your views here.
@@ -30,4 +32,14 @@ def markDatabaseSearch(request):
         return HttpResponse("Error", status=500)
 
 
-download_and_process_files()
+# This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
+# download_and_process_files()
+
+# models = []
+# for file in os.listdir():
+#     if file.endswith(".xml"):
+#         models.extend(make_trademark_objects(file))
+#
+# print("Inserting into database")
+#
+# db.insert_into_table(models)

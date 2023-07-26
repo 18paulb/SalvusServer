@@ -8,7 +8,7 @@ table = dynamodb.Table('Trademarks')
 This function takes in a list of trademark objects and inserts them into the database
 """
 def insert_into_table(trademarks: list):
-    # TODO: Eventually we will need to include case_file_descriptions somehow
+    # TODO: As of right now some case_file_descriptions are too large to insert into the database
     with table.batch_writer() as batch:
         for trademark in trademarks:
             try:
@@ -21,6 +21,7 @@ def insert_into_table(trademarks: list):
                             "date_filed": trademark.date_filed,
                             "code": None,
                             "activeStatus": trademark.activeStatus
+                            # "case_file_descriptions": trademark.case_file_descriptions
                         }
                     )
 
@@ -34,6 +35,7 @@ def insert_into_table(trademarks: list):
                                 "date_filed": trademark.date_filed,
                                 "code": code,
                                 "activeStatus": trademark.activeStatus
+                                # "case_file_descriptions": trademark.case_file_descriptions
                             }
                         )
                 else:
@@ -44,7 +46,8 @@ def insert_into_table(trademarks: list):
                             "case_owners": trademark.case_owners,
                             "date_filed": trademark.date_filed,
                             "code": trademark.codes[0],
-                            "activeStatus": trademark.activeStatus
+                            "activeStatus": trademark.activeStatus,
+                            "case_file_descriptions": trademark.case_file_descriptions
                         }
                     )
             except Exception as e:
@@ -73,12 +76,3 @@ def get_trademarks_by_code(code: str):
         trademarks.append(tmp)
 
     return trademarks
-
-
-# trademarks = make_trademark_objects(open("cleaned-10.xml", "r"))
-#
-# # This is just to make sure the database doesn't get too big
-# if len(trademarks) > 100:
-#     trademarks = trademarks[0:100]
-#
-# insert_into_table(trademarks)
