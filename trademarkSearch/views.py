@@ -1,22 +1,33 @@
-from django.shortcuts import render
-import textSimilarity as ts
-import database as db
+import json
+
+from django.http import HttpResponse
+
+import trademarkSearch.database as db
+import trademarkSearch.textSimilarity as ts
+from trademarkSearch.datacleaning import download_and_process_files
+
 
 # Create your views here.
 
-def main(request):
-    inputMark = input("Enter a mark: ")
+def markDatabaseSearch(request):
+    try:
+        inputMark = request.GET.get('query')
+        typeCode = request.GET.get('code')
 
-    infringementList = []
+        infringementList = []
 
-    marks = db.get_trademarks_by_code('014')
+        marks = db.get_trademarks_by_code(typeCode)
 
-    ts.judge_exact_match(marks, inputMark, infringementList)
-    ts.judge_ratio_fuzzy(marks, inputMark, infringementList)
+        ts.judge_exact_match(marks, inputMark, infringementList)
+        ts.judge_ratio_fuzzy(marks, inputMark, infringementList)
 
-    print("Infringement List: \n")
+        return HttpResponse(json.dumps({'trademarks': [infringement.to_dict() for infringement in infringementList]}),
+                            content_type="application/json",
+                            status=200)
 
-    for (i, infringement) in enumerate(infringementList):
-        print(str(i) + ": " + str(infringement) + "\n\n")
+    except Exception as e:
+        print(e)
+        return HttpResponse("Error", status=500)
 
-main(None)
+
+download_and_process_files()

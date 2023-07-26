@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from salvusbackend import views
+
+from trademarkSearch import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('markSearch', views.markDatabaseSearch, name='markSearch'),
 ]

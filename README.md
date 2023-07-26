@@ -1,4 +1,5 @@
 # SalvusServer
+
 Important Links:
 
 Chat GPT link to talk about high level Transformer Process
@@ -14,14 +15,16 @@ Explains XML of Bulk Download
 https://www.uspto.gov/sites/default/files/products/applications-documentation.pdf
 
 If we want to use it on Trademark infringement. We may have to get Data of trademark infringement cases and label them
- - But could we get enough data for it to be viable?
- - That's a lot of data we would need to hand process
+
+- But could we get enough data for it to be viable?
+- That's a lot of data we would need to hand process
 
 Ex for this (Pretty sure this falls under a Supervised Learning NLP Model)
 Let's say I have an array of word marks
-    text = ["Text1", "Text2", ...]
+text = ["Text1", "Text2", ...]
 
-I would need an array of labels that accurately describes the text, an example would be a binary label with 0 being an infringement and 1 being fine
+I would need an array of labels that accurately describes the text, an example would be a binary label with 0 being an
+infringement and 1 being fine
 (Although I don't understand how that would work, would the entire model just predict similarity to one wordmark?)
 
     labels = [0, 1, ...]
@@ -32,21 +35,27 @@ How To Make Word Mark Searches Efficient
 * We need to really figure out how to shrink the data we are comparing against
 
 A couple ideas:
-    1. Separate each mark-identification we have into a JSON file (or separate JSON files because of so much data) that falls under codes
-        that way when we have to do a search, we only need to look for the marks that fall under the same or similar codes
 
-    SIDE NOTE: We can train a model to classify a code for any text from the user side since we have so much data on what falls under what code, that will save the user some work.
-    We would just use the labeling example from above
-    * Well it COULD save the user some work, it depends on the text they are putting in. Is asking the User to put in a description any easier than having them manually choose a code?
-    
+1. Separate each mark-identification we have into a JSON file (or separate JSON files because of so much data) that
+   falls under codes
+   that way when we have to do a search, we only need to look for the marks that fall under the same or similar codes
+
+   SIDE NOTE: We can train a model to classify a code for any text from the user side since we have so much data on what
+   falls under what code, that will save the user some work.
+   We would just use the labeling example from above
+    * Well it COULD save the user some work, it depends on the text they are putting in. Is asking the User to put in a
+      description any easier than having them manually choose a code?
 
 Judging Word Mark Similiarity
-    1. Exact Matches Obviously
-        - Though for this how do we separate and compare phrases?
-    2. More Rough Matches (Fuzzy Search Algorithms?)
-    3. Cosine Values, Comparing Semantics Using BERT (Needs more research to see if reliable or not)
-    4. Not looking at the word mark itself but rather the people who uses it as that could be an infringement if they are (not sure how this would work)
 
+1. Exact Matches Obviously
+
+- Though for this how do we separate and compare phrases?
+
+2. More Rough Matches (Fuzzy Search Algorithms?)
+3. Cosine Values, Comparing Semantics Using BERT (Needs more research to see if reliable or not)
+4. Not looking at the word mark itself but rather the people who uses it as that could be an infringement if they are (
+   not sure how this would work)
 
 Models Needed:
 
@@ -59,6 +68,7 @@ Models Needed:
 3. Model to take description text and give it a classification code (use classifications info as text and labels)
 
 Trademark Object Information That Is Needed From Each Case-file
+
 1. Serial Number
 2. Filing Date ?
 3. Mark Identification
@@ -68,8 +78,10 @@ Trademark Object Information That Is Needed From Each Case-file
 7. Mark Drawing Code (Eventually)
 
 Other Important Info:
-<concurrent-use-in> a federal trademark registration of the same trademark to two or more unrelated parties, with each party having a registration limited to a distinct geographic area.
-<renewal-filed-in> A "T" indicates that a renewal application has been filed for this registration. Otherwise, this field will contain an "F".
+<concurrent-use-in> a federal trademark registration of the same trademark to two or more unrelated parties, with each
+party having a registration limited to a distinct geographic area.
+<renewal-filed-in> A "T" indicates that a renewal application has been filed for this registration. Otherwise, this
+field will contain an "F".
 
 <case-file-statements> 
 Code D1 - Disclaimer with Predetermined Text (The following Text will appear as part of the disclaimer, “No claim is made to the exclusive right to use…., apart from the mark as shown.”)

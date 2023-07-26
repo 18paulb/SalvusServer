@@ -1,11 +1,8 @@
 from transformers import BertTokenizer, BertModel
 from sklearn.metrics.pairwise import cosine_similarity
-from jsonify import load_in_json
-from fuzzywuzzy import fuzz
-from models import Trademark
 
-#Test
-from sklearn.feature_extraction.text import TfidfVectorizer
+from fuzzywuzzy import fuzz
+from trademarkSearch.models import Trademark
 
 class BertTextSimilarity:
     def __init__(self):
@@ -25,24 +22,9 @@ class BertTextSimilarity:
         similarity = cosine_similarity(embedding1, embedding2)
         return similarity
 
-
-def judge_mark_identification(trademarks: list, inputText: str, code: str):
-    wordList = inputText.lower().split(" ")
-
-    for trademark in trademarks:
-        # Currently removes one letter word marks
-        if trademark.mark_identification in wordList and code in trademark.codes:
-            print("Possible Infringement Found: \n")
-            print(str(trademark) + "\n\n")
-
-
-
 def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
-
     for trademark in trademarks:
         if trademark.mark_identification == inputText:
-            # print("Possible Infringement Found: \n")
-            # print(mark + "\n\n")
             infringementList.append(trademark)
             trademarks.remove(trademark)
 
@@ -54,22 +36,8 @@ def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
 # - fuzz.token_set_ratio()
 
 def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
-
     for trademark in trademarks:
-    
         if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
             infringementList.append(trademark)
             trademarks.remove(trademark)
 
-# def compute_cosine_similarity(mark_identification: list, text: str, possible_infringement_list: list):
-
-#     vectorizer = TfidfVectorizer()
-
-#     for mark in mark_identification:
-#         matrix = vectorizer.fit_transform([mark, text])
-#         score = cosine_similarity(matrix)
-#         if score > .5:
-#             print("Possible Infringement Found: \n")
-#             print(mark + "\n\n")
-#             possible_infringement_list.append(mark)
-#             mark_identification.remove(mark)
