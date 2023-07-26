@@ -38,10 +38,12 @@ class Trademark:
 # The input of this will be the cleaned XML file Make sure the file structure at this point is
 # <trademark-applications-daily><case-file></case-file></trademark-applications-daily> With no other elements in
 # between trade-mark-applications and case-file
-def make_trademark_objects(file):
+def make_trademark_objects(filename):
     listOfTrademarks = []
     # Info in files to help classify trademarks further
-    code_map = json.load(open("salvusbackend/trademarkSearch/info/status-codes.json", 'r'))
+    code_map = json.load(open("trademarkSearch/info/status-codes.json", 'r'))
+
+    file = open(filename, "r")
 
     try:
         tree = ET.parse(file)
@@ -58,7 +60,7 @@ def make_trademark_objects(file):
         mark = caseFile.find("case-file-header/mark-identification")
         date_filed = caseFile.find("case-file-header/filing-date")
         codes = caseFile.findall("classifications/classification/primary-code")
-        case_file_descriptions = caseFile.findall("case-file-statements/case-file-statement/text")
+        case_file_statements = caseFile.findall("case-file-statements/case-file-statement")
         case_owners = caseFile.findall("case-file-owners/case-file-owner/party-name")
 
         # incorporate this data into the trademark object
@@ -73,8 +75,15 @@ def make_trademark_objects(file):
             for code in codes:
                 newTrademark.codes.append(code.text)
 
-            for description in case_file_descriptions:
-                newTrademark.case_file_descriptions.append(description.text)
+            for statement in case_file_statements:
+                typecode = statement.find("type-code").text
+                description = statement.find("text").text
+
+                if typecode is None or description is None:
+                    continue
+
+                if typecode[0:2] == "GS":
+                    newTrademark.case_file_descriptions.append(description)
 
             for owner in case_owners:
                 newTrademark.case_owners.append(owner.text)
