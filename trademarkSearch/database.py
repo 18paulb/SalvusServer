@@ -6,6 +6,9 @@ from models import make_trademark_objects
 dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 table = dynamodb.Table('Trademarks')
 
+"""
+This function takes in a list of trademark objects and inserts them into the database
+"""
 def insert_into_table(trademarks: list):
 
     #TODO: Eventually we will need to include case_file_descriptions somehow
@@ -53,6 +56,9 @@ def insert_into_table(trademarks: list):
                 continue
 
 
+"""
+This function takes in a code and returns queries the database for all trademarks with that code
+"""
 def get_trademarks_by_code(code: str):
 
     response = table.query(
@@ -71,8 +77,6 @@ def get_trademarks_by_code(code: str):
 
     return trademarks
 
-
-# get_trademarks_by_code('014')
 
 trademarks = make_trademark_objects(open("cleaned-10.xml", "r"))
 

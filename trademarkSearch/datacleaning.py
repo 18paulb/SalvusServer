@@ -2,7 +2,8 @@ import re
 import xml.etree.ElementTree as ET
 import shutil
 import zipfile
-import request
+from lxml import etree
+import requests
 
 # import required module
 import os
@@ -12,12 +13,23 @@ import os
 # Consider using multithreading to see if it speeds up the process of downloading
 # Then consider using multiprocessing to see if it speeds up the process of cleaning files
 def download_files(filenames):
+
+    url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-01.zip"
+
     return
 
 #This is used to remove elements of any tag from XML file
 def remove_elements(element, tags):
+
+    # Removes a lot of needless information from case-file-header - Might consider removing later
+    if element.tag == 'case-file-header':
+        for child in list(element):
+            if child.tag != 'filing-date' and child.tag != 'registration-date' and child.tag and 'status-code' and child.tag != 'status-date' and child.tag != 'mark-identification' and child.tag != 'mark-drawing-code':
+                element.remove(child)
+
     # Iterate over a copy of the element's children
     for child in list(element):
+
         if child.tag in tags:
             # Remove the child
             element.remove(child)
@@ -38,53 +50,29 @@ def remove_non_alphabetical(file_path):
     with open(file_path, 'w') as file:
         file.write(content)
 
+# This function will take the original unzipped USPTO XML file and clean it, saving it to a new file
+# Make sure all paths are correct
+def clean_data(source_file_path, destination_file_path):
 
-def clean_data():
-    # assign directory
-    directory = 'data/original'
-    
-    for filename in os.listdir(directory):
-        f = os.path.join(directory, filename)
-        # checking if it is a file
-        if os.path.isfile(f):
+    parser = etree.XMLParser(remove_comments=True)
+    # Get the root element of the XML document
+    tree = etree.parse(source_file_path, parser)
+    root = tree.getroot()
 
-            #Makes copy of file
-            # source_file_path = directory + '/' + filename
-            destination_file_path = 'data/cleaned/' + "cleaned" + filename[len(filename)-7 : len(filename)]
-            # shutil.copy(source_file_path, destination_file_path)
-            # Assume that the XML data is in a file called 'data.xml'
+    case_files = root.findall('.//case-file')
 
+    for case in case_files:
+        # Remove Case File from parent
+        case_file_parent = case.getparent()
+        case_file_parent.remove(case)
 
-            #edits copied files
-            tree = ET.parse(destination_file_path)
-            # Get the root element of the XML document
-            root = tree.getroot()
-            
-            #Removing Elements
-            remove_elements(root, ['version', 'case-file-event-statements', 'correspondent', 'prior-registration-applications'])
+        # Add Case File To Root
+        root.append(case)
 
-            tree.write(destination_file_path)
+    #Removing Elements
+    remove_elements(root, ['version', 'case-file-event-statements', 'correspondent', 'prior-registration-applications', 'application-information'])
 
-# main()
+    #Writes the cleaned file to this file
+    tree.write(destination_file_path, pretty_print=True, xml_declaration=True, encoding="utf-8")
 
-
-# TODO: Implement
-
-# tree = ET.parse('data.xml')
-# root = tree.getroot()
-
-# # 'grandparent' is the new parent for the 'children'
-# new_parent = root.find('.//grandparent')
-
-# # Find all 'children' and move them to 'grandparent'
-# for child in root.findall('.//child'):
-#     # We have to find the parent because the standard ElementTree module doesn't provide a getparent() method
-#     # We assume the parent is an immediate child of root here
-#     for parent in root:
-#         if child in parent:
-#             parent.remove(child)
-#             new_parent.append(child)
-#             break  # No need to check other parents
-
-# # Save the resulting XML
-# tree.write('new_data.xml')
+clean_data("apc18840407-20221231-10.xml", "cleaned.xml")

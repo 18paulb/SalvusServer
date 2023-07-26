@@ -2,6 +2,7 @@ import json
 import os
 from models import Trademark, make_trademark_objects
 
+#This function takes in trademark objects and creates a JSON file of them
 def make_json_file_of_objects(trademarksList: list):
 
     file = open("data/json/trademarkObjects.json", "w")
@@ -19,6 +20,7 @@ def make_json_file_of_objects(trademarksList: list):
     file.close()
 
 
+#This function takes in trademark objects and creates a JSON file of their mark_identification
 def make_json_file_of_mark_identification(trademarksList: list):
     file = open("data/json/mark_identification.json", "w")
 
@@ -39,6 +41,7 @@ def make_json_file_of_mark_identification(trademarksList: list):
     json.dump(code_dict, file)
     file.close()
 
+#This function takes in a filepath to a JSON file of trademarks and returns a list of trademark objects
 def load_in_json(filepath):
     file = open(filepath, "r")
     data = json.load(file)
@@ -61,9 +64,7 @@ def load_in_json(filepath):
 #         f = os.path.join(directory, filename)
 #         # checking if it is a file
 #         if os.path.isfile(f):
-
 #             trademarks.extend(make_trademark_objects(f))
-
 
 #     make_json_file_of_objects(trademarks)
 #     make_json_file_of_mark_identification(trademarks)

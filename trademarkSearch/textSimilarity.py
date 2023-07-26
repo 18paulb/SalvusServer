@@ -73,23 +73,3 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
 #             print(mark + "\n\n")
 #             possible_infringement_list.append(mark)
 #             mark_identification.remove(mark)
-
-
-def compare_text_to_marklist(text: str, wordMarks: list):
-
-    similar_words = []
-
-    comparater = BertTextSimilarity()
-
-    i = 0
-    for mark in wordMarks:
-        i = i + 1
-        if comparater.compute_similarity(mark.lower(), text.lower()) > .5:
-            print(i)
-            similar_words.append(mark)
-
-        if i == 500:
-            break
-
-    return similar_words
-

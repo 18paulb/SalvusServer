@@ -19,7 +19,9 @@ class Trademark:
     def __str__(self):
         return "Case Owners: " + "\n".join(self.case_owners) + "\nDate Filed: " + self.date_filed + "\nactiveStatus: " + self.activeStatus + "\nSerial Number: " + self.serial_number + "\nMark Identification: " + self.mark_identification + "\nCodes: " + " ".join(self.codes) + "\nDescriptions: " + "\n".join(self.case_file_descriptions) + "\n\n"
     
-
+# The input of this will be the cleaned XML file
+# Make sure the file structure at this point is <trademark-applications-daily><case-file></case-file></trademark-applications-daily>
+# With no other elements in between trade-mark-applications and case-file
 def make_trademark_objects(file):
 
     listOfTrademarks = []
