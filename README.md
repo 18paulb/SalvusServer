@@ -13,8 +13,6 @@ https://www.uspto.gov/web/offices/com/sol/og/con/files/cons181.htm
 Explains XML of Bulk Download
 https://www.uspto.gov/sites/default/files/products/applications-documentation.pdf
 
-
-
 If we want to use it on Trademark infringement. We may have to get Data of trademark infringement cases and label them
  - But could we get enough data for it to be viable?
  - That's a lot of data we would need to hand process
@@ -28,10 +26,6 @@ I would need an array of labels that accurately describes the text, an example w
 
     labels = [0, 1, ...]
 
-
-Cleaning Data
-* Remove any wordmarks with exact texts? Not sure if that would be good but if owned by the same company it should be fine
-
 How To Make Word Mark Searches Efficient
 
 * Obviously we will have a LOT of data and it isn't efficient to compare text against every possible word mark
@@ -44,8 +38,7 @@ A couple ideas:
     SIDE NOTE: We can train a model to classify a code for any text from the user side since we have so much data on what falls under what code, that will save the user some work.
     We would just use the labeling example from above
     * Well it COULD save the user some work, it depends on the text they are putting in. Is asking the User to put in a description any easier than having them manually choose a code?
-
-    2. Honestly I can't think of anything else
+    
 
 Judging Word Mark Similiarity
     1. Exact Matches Obviously
@@ -55,7 +48,7 @@ Judging Word Mark Similiarity
     4. Not looking at the word mark itself but rather the people who uses it as that could be an infringement if they are (not sure how this would work)
 
 
-Models Needed;
+Models Needed:
 
 1. Model to judge text similarity
     - Train on Trademark cases where infringements have both passed and failed in court
@@ -64,7 +57,6 @@ Models Needed;
     - Train on registered in USPTO and the codes they already have, then compare codes to determine likeness of image
 
 3. Model to take description text and give it a classification code (use classifications info as text and labels)
-
 
 Trademark Object Information That Is Needed From Each Case-file
 1. Serial Number
@@ -75,23 +67,12 @@ Trademark Object Information That Is Needed From Each Case-file
 6. Case File Owners
 7. Mark Drawing Code (Eventually)
 
-How To Tell If Mark Is Style Alive Or Not (Double Check That They Are Actually Abandoned)
-
-Dead
-<abandonement-date> 
-<cancellation-date>
-Possible: <trademark-in>
-<cancellation-pending-in>
-
-Alive
-<republished-12c-date>
-
 Other Important Info:
 <concurrent-use-in> a federal trademark registration of the same trademark to two or more unrelated parties, with each party having a registration limited to a distinct geographic area.
 <renewal-filed-in> A "T" indicates that a renewal application has been filed for this registration. Otherwise, this field will contain an "F".
 
-TODO: Look more into these, it may be important
 <case-file-statements> 
 Code D1 - Disclaimer with Predetermined Text (The following Text will appear as part of the disclaimer, “No claim is made to the exclusive right to use…., apart from the mark as shown.”)
+Code GS - The actual description of the product, use in combination with primary code to classify
 
 <classification><status-code> could be pretty important
