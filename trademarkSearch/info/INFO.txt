@@ -53,6 +53,11 @@ Judging Word Mark Similiarity
     3. Cosine Values, Comparing Semantics Using BERT (Needs more research to see if reliable or not)
     4. Not looking at the word mark itself but rather the people who uses it as that could be an infringement if they are (not sure how this would work)
 
+Future Infringement Reasons:
+1. Phonetics
+2. Translation (English Equivalence)
+3. Transposed Marks (If the mark is Logan Gibbons, then Gibbons Logan would be an infringement)
+
 
 Models Needed;
 
