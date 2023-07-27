@@ -99,3 +99,6 @@ TODO: Look more into these, it may be important
 Code D1 - Disclaimer with Predetermined Text (The following Text will appear as part of the disclaimer, “No claim is made to the exclusive right to use…., apart from the mark as shown.”)
 
 <classification><status-code> could be pretty important
+
+USERS CLASSIFYING CODES:
+Don't have more than 9 options for user to choose from (too many options will make it hard for them to choose)
