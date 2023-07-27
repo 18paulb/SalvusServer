@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from trademarkSearch import views
+from trademarkSearch import views as trademarkSearch_views
+from register import views as register_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('markSearch', views.markDatabaseSearch, name='markSearch'),
+    path('markSearch', trademarkSearch_views.markDatabaseSearch, name='mark_search'),
+    path('register', register_views.register, name='register'),
 ]

@@ -7,6 +7,7 @@ import trademarkSearch.textSimilarity as ts
 from trademarkSearch.datacleaning import download_and_process_files
 from trademarkSearch.models import Trademark, make_trademark_objects
 import os
+from salvusbackend.logger import logger
 
 
 # Create your views here.
@@ -23,14 +24,13 @@ def markDatabaseSearch(request):
         ts.judge_exact_match(marks, inputMark, infringementList)
         ts.judge_ratio_fuzzy(marks, inputMark, infringementList)
 
-        return HttpResponse(json.dumps({'trademarks': [infringement.to_dict() for infringement in infringementList]}),
+        return HttpResponse(json.dumps([infringement.to_dict() for infringement in infringementList]),
                             content_type="application/json",
                             status=200)
 
     except Exception as e:
-        print(e)
-        return HttpResponse("Error", status=500)
-
+        logger.error(e)
+        return HttpResponse("An error has occured", status=500)
 
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
