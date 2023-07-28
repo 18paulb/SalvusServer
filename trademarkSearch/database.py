@@ -1,12 +1,17 @@
 import boto3
 from trademarkSearch.models import Trademark, make_trademark_objects
+import uuid
+from salvusbackend.logger import logger
 
 dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 table = dynamodb.Table('Trademarks')
+searchTable = dynamodb.Table('Searches')
 
 """
 This function takes in a list of trademark objects and inserts them into the database
 """
+
+
 def insert_into_table(trademarks: list):
     # TODO: As of right now some case_file_descriptions are too large to insert into the database
     with table.batch_writer() as batch:
@@ -51,13 +56,31 @@ def insert_into_table(trademarks: list):
                         }
                     )
             except Exception as e:
+                logger.error(e)
                 print(e)
                 continue
+
+
+def save_search_into_table(searchText, email, company):
+    # Eventually figure out how to include email and company (through GET request) (Actually just use the authtoken
+    # in the header)
+    try:
+        searchTable.put_item(
+            Item={
+                "searchId": str(uuid.uuid4()),
+                "searchText": searchText,
+            }
+        )
+    except Exception as e:
+        logger.error(e)
+        print(e)
 
 
 """
 This function takes in a code and returns queries the database for all trademarks with that code
 """
+
+
 def get_trademarks_by_code(code: str):
     response = table.query(
         IndexName='code-index',

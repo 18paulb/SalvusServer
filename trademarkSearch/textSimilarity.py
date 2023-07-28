@@ -4,6 +4,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from fuzzywuzzy import fuzz
 from trademarkSearch.models import Trademark
 
+
 class BertTextSimilarity:
     def __init__(self):
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -22,11 +23,13 @@ class BertTextSimilarity:
         similarity = cosine_similarity(embedding1, embedding2)
         return similarity
 
+
 def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
     for trademark in trademarks:
         if trademark.mark_identification == inputText:
             infringementList.append(trademark)
             trademarks.remove(trademark)
+
 
 # This judges similarity of text
 # TODO: Decide which is best case (or use all)
@@ -40,4 +43,3 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
         if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
             infringementList.append(trademark)
             trademarks.remove(trademark)
-
