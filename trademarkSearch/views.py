@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 import trademarkSearch.database as db
 import trademarkSearch.textSimilarity as ts
@@ -20,12 +20,12 @@ def markDatabaseSearch(request):
         infringementList = []
 
         marks = db.get_trademarks_by_code(typeCode)
+        db.save_search_into_table(inputMark, "email", "company")
 
         ts.judge_exact_match(marks, inputMark, infringementList)
         ts.judge_ratio_fuzzy(marks, inputMark, infringementList)
 
-        return HttpResponse(json.dumps([infringement.to_dict() for infringement in infringementList]),
-                            content_type="application/json",
+        return JsonResponse(json.dumps([infringement.to_dict() for infringement in infringementList]),
                             status=200)
 
     except Exception as e:

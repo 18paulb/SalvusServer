@@ -1,0 +1,53 @@
+{
+  "codes": {
+    "Goods": {
+      "Chemicals": "001",
+      "Paints": "002",
+      "Cosmetics and cleaning preparations": "003",
+      "Lubricants and fuels": "004",
+      "Pharmaceuticals": "005",
+      "Metal goods": "006",
+      "Machinery": "007",
+      "Hand tools": "008",
+      "Electrical and scientific apparatus": "009",
+      "Medical apparatus": "010",
+      "Environmental control apparatus": "011",
+      "Vehicles": "012",
+      "Firearms": "013",
+      "Jewelry": "014",
+      "Musical instruments": "015",
+      "Paper goods and printed matter": "016",
+      "Rubber goods": "017",
+      "Leather goods": "018",
+      "Non-metallic building materials": "019",
+      "Furniture and articles not otherwise classified": "020",
+      "Housewares and glass": "021",
+      "Cordage and fibers": "022",
+      "Yarns and threads": "023",
+      "Fabrics": "024",
+      "Clothing": "025",
+      "Fancy goods": "026",
+      "Floor coverings": "027",
+      "Toys and sporting goods": "028",
+      "Meats and processed foods": "029",
+      "Staple foods": "030",
+      "Natural agricultural products": "031",
+      "Light beverages": "032",
+      "Wines and spirits": "033",
+      "Smokers' articles": "034"
+    },
+    "Services": {
+      "Advertising and business": "035",
+      "Insurance and financial": "036",
+      "Building construction and repair": "037",
+      "Telecommunication": "038",
+      "Transportation and storage": "039",
+      "Treatment of materials": "040",
+      "Education and entertainment": "041",
+      "Computer and scientific": "042",
+      "Hotels and restaurants": "043",
+      "Medical, beauty, and agricultural": "044",
+      "Personal and legal": "045"
+    }
+  }
+}

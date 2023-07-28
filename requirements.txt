@@ -1,1 +1,10 @@
 boto3
+bcrypt
+python-decouple
+Django
+lxml
+transformers
+sklearn
+scikit-learn
+fuzzywuzzy
+PyJWT

@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path
 
 from trademarkSearch import views as trademarkSearch_views
-from register import views as register_views
+from authentication import registerviews
+from authentication import loginviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('markSearch', trademarkSearch_views.markDatabaseSearch, name='mark_search'),
-    path('register', register_views.register, name='register'),
+    path('register', registerviews.register, name='register'),
+    path('login', loginviews.login, name='login')
 ]
