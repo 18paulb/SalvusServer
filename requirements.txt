@@ -8,3 +8,5 @@ sklearn
 scikit-learn
 fuzzywuzzy
 PyJWT
+torch
+requests
