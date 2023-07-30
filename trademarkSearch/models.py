@@ -41,7 +41,7 @@ class Trademark:
 def make_trademark_objects(filename):
     listOfTrademarks = []
     # Info in files to help classify trademarks further
-    code_map = json.load(open("trademarkSearch/info/status-codes.json", 'r'))
+    code_map = json.load(open("salvusBackend/info/status-codes.json", 'r'))
 
     file = open(filename, "r")
 

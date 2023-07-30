@@ -54,19 +54,3 @@ def load_in_json(filepath):
 
     file.close()
     return trademarks
-
-# def main():
-#     directory = 'data/cleaned'
-
-#     trademarks = []
-
-#     for filename in os.listdir(directory):
-#         f = os.path.join(directory, filename)
-#         # checking if it is a file
-#         if os.path.isfile(f):
-#             trademarks.extend(make_trademark_objects(f))
-
-#     make_json_file_of_objects(trademarks)
-#     make_json_file_of_mark_identification(trademarks)
-
-# main()

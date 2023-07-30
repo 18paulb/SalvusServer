@@ -57,11 +57,10 @@ def insert_into_table(trademarks: list):
                     )
             except Exception as e:
                 logger.error(e)
-                print(e)
                 continue
 
 
-def save_search_into_table(searchText, email, company):
+def save_search_into_table(searchText, email, company, typeCode):
     # Eventually figure out how to include email and company (through GET request) (Actually just use the authtoken
     # in the header)
     try:
@@ -69,11 +68,13 @@ def save_search_into_table(searchText, email, company):
             Item={
                 "searchId": str(uuid.uuid4()),
                 "searchText": searchText,
+                "email": email,
+                "company": company,
+                "code": typeCode
             }
         )
     except Exception as e:
         logger.error(e)
-        print(e)
 
 
 """
@@ -88,14 +89,12 @@ def get_trademarks_by_code(code: str):
     )
 
     items = response['Items']
-
     trademarks = []
 
     for trademark in items:
         # TODO: Eventually we will need to include case_file_descriptions somehow
         tmp = Trademark(trademark["mark_identification"], trademark["serial_number"], trademark["code"], [],
                         trademark["case_owners"], trademark["date_filed"])
-
         trademarks.append(tmp)
 
     return trademarks

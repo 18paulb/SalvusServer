@@ -4,6 +4,7 @@ import re
 import string
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
+from salvusbackend.logger import logger
 
 import requests
 from lxml import etree
@@ -17,11 +18,11 @@ def download_and_process_files():
     base_url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-"
 
     urls = [
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc230101.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc230102.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc230103.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc230104.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc230105.zip'
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-60.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-61.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-62.zip'
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-63.zip'
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-64.zip'
     ]
 
     with ThreadPoolExecutor(max_workers=5) as executor:
@@ -51,7 +52,7 @@ def download_file(url):
     try:
         response = requests.get(url)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return
 
     # This generates a random string name for the zipfile so that the threads do not overwrite each other
@@ -75,7 +76,7 @@ def download_file(url):
         # Delete the downloaded zip file after extracting its contents
         os.remove(filename)
     except Exception as e:
-        print(e)
+        logger.error(e)
         return
 
     return extracted_file
@@ -136,3 +137,66 @@ def clean_data(source_file_path, destination_file_path):
 
     # Writes the cleaned file to this file
     tree.write(destination_file_path, pretty_print=True, xml_declaration=True, encoding="utf-8")
+
+
+# Right now just get the code and descriptions from any case-file that only has one classification
+def get_training_data(source_file_path):
+
+    tree = etree.parse(source_file_path)
+    root = tree.getroot()
+    case_files = root.findall('.//case-file')
+
+    codes_descriptions = []
+
+    code = None
+
+    code_descriptions_map = {}
+
+    for case in case_files:
+        try:
+            classifications = case.findall('.//classifications/classification')
+            case_file_statements = case.findall('.//case-file-statements/case-file-statement')
+        except Exception as e:
+            logger.error(e)
+            continue
+
+        # We're not going to worry about if there are multiple classifications for now, still have to figure out how to handle that
+        if len(classifications) == 1:
+            try:
+                if classifications[0].find('.//primary-code') is not None:
+                    code = classifications[0].find('.//primary-code').text
+            except Exception as e:
+                logger.error(e)
+                continue
+        else:
+            continue
+
+        for file_statement in case_file_statements:
+            type_code = None
+            description = None
+            try:
+                # TODO: There are issues if there are multiple statements, causes some labels to not be correct
+                if file_statement.find(".//type-code") is not None and file_statement.find(".//text") is not None:
+                    type_code = file_statement.find(".//type-code").text
+                    description = file_statement.find(".//text").text
+
+                    if code not in code_descriptions_map:
+                        code_descriptions_map[code] = []
+
+            except Exception as e:
+                print(e)
+                continue
+
+            # Makes sure to only get the GS codes and not the other ones
+            if type_code[0:2] == "GS" and description is not None and code is not None:
+
+                # Right now we are limiting the data for each code to 1000, this can be changed later
+                if len(code_descriptions_map[code]) < 1000:
+                    code_descriptions_map[code].append(description)
+
+    # For each index in the value, return a pair of the key and the value
+    for key, value in code_descriptions_map.items():
+        for description in value:
+            codes_descriptions.append((key, description))
+
+    return codes_descriptions
