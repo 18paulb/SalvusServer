@@ -31,6 +31,14 @@ def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
             trademarks.remove(trademark)
 
 
+# This is not good, consider just scrapping this
+def judge_BERT(trademarks: list, inputText: str, infringementList: list):
+    bert = BertTextSimilarity()
+    for trademark in trademarks:
+        if bert.compute_similarity(trademark.mark_identification, inputText) > 0.75:
+            infringementList.append(trademark)
+            trademarks.remove(trademark)
+
 # This judges similarity of text
 # TODO: Decide which is best case (or use all)
 # - fuzz.ratio()

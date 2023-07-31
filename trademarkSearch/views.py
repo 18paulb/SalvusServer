@@ -34,7 +34,7 @@ def markDatabaseSearch(request):
 
     except Exception as e:
         logger.error(e)
-        return HttpResponse("An error has occured", status=500)
+        return HttpResponse("An error has occurred", status=500)
 
 
 def classifyCode(request):
@@ -45,8 +45,6 @@ def classifyCode(request):
         with open("salvusbackend/info/codes.json", "r") as f:
             # Load JSON data from the file
             codes_dict = json.load(f)
-
-            codes_dict = {}
 
             # Iterate over the "Goods" and "Services" keys in the codes_dict dictionary
             for category in codes_dict["codes"]:
