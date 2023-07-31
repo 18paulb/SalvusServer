@@ -25,14 +25,17 @@ def login(request):
         # Finds the hashed password in the database
         hashedPassword = find_password_by_username(email)
 
+        if hashedPassword is None:
+            return JsonResponse({"message": "Username not found"}, status=401)
+
         # Checks to make sure that the password is correct
         success = verify_password(hashedPassword, password)
 
-        # Creates new authtoken and updates it in the database
-        authtoken, expDate = generate_authtoken()
-        update_user_authtoken(email, authtoken, expDate)
-
         if success:
+            # Creates new authtoken and updates it in the database
+            authtoken, expDate = generate_authtoken()
+            update_user_authtoken(email, authtoken, expDate)
+
             return JsonResponse({"message": "Successfully Logged In", "authtoken": authtoken, "expDate": expDate},
                                 status=200)
         else:

@@ -3,8 +3,6 @@ import xml.etree.ElementTree as ET
 import json
 
 
-# Create your models here.
-
 # This is not a django model, but it is a model for the trademark object
 class Trademark:
 
@@ -24,12 +22,17 @@ class Trademark:
             self.codes) + "\nDescriptions: " + "\n".join(self.case_file_descriptions) + "\n\n"
 
     def to_dict(self):
+
+        # Get rid of duplicates in lists (includes case sensitivity)
+        case_owners = list(set([s.lower() for s in self.case_file_descriptions]))
+        case_file_descriptions = list(set([s.lower() for s in self.case_file_descriptions]))
+
         return {
             'mark_identification': self.mark_identification,
             'serial_number': self.serial_number,
-            'codes': self.codes,
-            'case_file_descriptions': self.case_file_descriptions,
-            'case_owners': self.case_owners,
+            'codes': list(set(self.codes)),
+            'case_file_descriptions': case_file_descriptions,
+            'case_owners': case_owners,
             'date_filed': self.date_filed,
             'activeStatus': self.activeStatus
         }

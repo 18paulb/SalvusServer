@@ -94,7 +94,7 @@ def get_trademarks_by_code(code: str):
     for trademark in items:
         # TODO: Eventually we will need to include case_file_descriptions somehow
         tmp = Trademark(trademark["mark_identification"], trademark["serial_number"], trademark["code"], [],
-                        trademark["case_owners"], trademark["date_filed"])
+                        trademark["case_owners"], trademark["date_filed"], None)
         trademarks.append(tmp)
 
     return trademarks
