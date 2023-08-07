@@ -18,11 +18,11 @@ def download_and_process_files():
     base_url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-"
 
     urls = [
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-60.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-61.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-62.zip'
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-63.zip'
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-64.zip'
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-01.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-02.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-03.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-04.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-05.zip'
     ]
 
     with ThreadPoolExecutor(max_workers=5) as executor:

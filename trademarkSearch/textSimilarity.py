@@ -2,6 +2,7 @@ from transformers import BertTokenizer, BertModel
 from sklearn.metrics.pairwise import cosine_similarity
 
 from fuzzywuzzy import fuzz
+import phonetics
 from trademarkSearch.models import Trademark
 
 
@@ -31,6 +32,18 @@ def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
             trademarks.remove(trademark)
 
 
+# Consider using Metaphone double metaphone
+def judge_phonetic_similarity(trademarks: list, inputText: str, infringementList: list):
+    for trademark in trademarks:
+        if phonetics.dmetaphone(trademark.mark_identification) == phonetics.dmetaphone(inputText):
+            infringementList.append(trademark)
+            trademarks.remove(trademark)
+
+
+# Eventually do language similarity
+def judge_language_similarity(trademarks: list, inputText: str, infringementList: list):
+    pass
+
 # This is not good, consider just scrapping this
 def judge_BERT(trademarks: list, inputText: str, infringementList: list):
     bert = BertTextSimilarity()
@@ -38,6 +51,7 @@ def judge_BERT(trademarks: list, inputText: str, infringementList: list):
         if bert.compute_similarity(trademark.mark_identification, inputText) > 0.75:
             infringementList.append(trademark)
             trademarks.remove(trademark)
+
 
 # This judges similarity of text
 # TODO: Decide which is best case (or use all)

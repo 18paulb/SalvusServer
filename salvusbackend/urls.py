@@ -25,4 +25,5 @@ urlpatterns = [
     path('register', registerviews.register, name='register'),
     path('login', loginviews.login, name='login'),
     path('classifyCode', trademarkSearch_views.classifyCode, name='classify_code'),
+    path('searchHistory', trademarkSearch_views.getSearchHistory, name='search_history')
 ]

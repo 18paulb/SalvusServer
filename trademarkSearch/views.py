@@ -16,6 +16,11 @@ from salvusbackend.transformer import classify_code, get_label_decoder
 
 def markDatabaseSearch(request):
     try:
+
+        # auth_header = request.META.get('HTTP_AUTHORIZATION', '')  # Fetch the header
+        # token = auth_header.split(' ')[1]  # Remove 'Bearer '
+        # verify_authtoken(token)
+
         inputMark = request.GET.get('query')
         typeCode = request.GET.get('code')
         companyName = request.GET.get('companyName')
@@ -28,6 +33,7 @@ def markDatabaseSearch(request):
 
         ts.judge_exact_match(marks, inputMark, infringementList)
         ts.judge_ratio_fuzzy(marks, inputMark, infringementList)
+        ts.judge_phonetic_similarity(marks, inputMark, infringementList)
 
         return JsonResponse([infringement.to_dict() for infringement in infringementList], safe=False,
                             status=200)
@@ -59,6 +65,15 @@ def classifyCode(request):
         return JsonResponse({"message": "An error has occurred"}, status=500)
 
 
+def getSearchHistory(request):
+    try:
+        email = request.GET.get('email')
+        return JsonResponse(db.get_search_history(email), safe=False, status=200)
+    except Exception as e:
+        logger.error(e)
+        return JsonResponse({"message": "An error has occurred"}, status=500)
+
+
 def verify_authtoken(email, authtoken):
     try:
         # Finds the hashed password in the database
@@ -67,6 +82,7 @@ def verify_authtoken(email, authtoken):
     except Exception as e:
         logger.error(e)
         return False
+
 
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
@@ -78,6 +94,7 @@ def verify_authtoken(email, authtoken):
 #
 # print("Inserting into database")
 # db.insert_into_table(models)
+# print("Finished inserting into database")
 
 # This code gets the training data from the xml files and puts it into a json file
 # codes = []
@@ -93,12 +110,3 @@ def verify_authtoken(email, authtoken):
 #     json.dump([{"code": code, "description": description} for code, description in zip(codes, descriptions)], f)
 #     print("Done writing file")
 #     f.close()
-
-
-# This tests to see if classifying codes work
-# from salvusbackend.transformer import classify_code
-# try:
-#     classify_code("Cups, Plates, and Bowls for a house and for people to eat")
-# except Exception as e:
-#     logger.error(e)
-#     print(e)
