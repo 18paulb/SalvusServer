@@ -15,15 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from trademarkSearch import views as trademarkSearch_views
+from trademarkSearch import trademarkViews
 from authentication import registerviews
 from authentication import loginviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('markSearch', trademarkSearch_views.markDatabaseSearch, name='mark_search'),
+    path('markSearch', trademarkViews.markDatabaseSearch, name='mark_search'),
     path('register', registerviews.register, name='register'),
     path('login', loginviews.login, name='login'),
-    path('classifyCode', trademarkSearch_views.classifyCode, name='classify_code'),
-    path('searchHistory', trademarkSearch_views.getSearchHistory, name='search_history')
+    path('classifyCode', trademarkViews.classifyCode, name='classify_code'),
+    path('searchHistory', trademarkViews.getSearchHistory, name='search_history')
 ]

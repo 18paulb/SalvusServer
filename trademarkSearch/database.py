@@ -15,7 +15,6 @@ This function takes in a list of trademark objects and inserts them into the dat
 
 
 def insert_into_table(trademarks: list):
-    # TODO: As of right now some case_file_descriptions are too large to insert into the database
     i = 1
     with table.batch_writer() as batch:
         for trademark in trademarks:
@@ -99,12 +98,20 @@ def get_trademarks_by_code(code: str):
     trademarks = []
 
     for trademark in items:
-        # TODO: Eventually we will need to include case_file_descriptions somehow
-        tmp = Trademark(trademark["mark_identification"], trademark["serial_number"], trademark["code"], trademark["descriptions"],
-                        trademark["case_owners"], trademark["date_filed"], trademark["activeStatus"])
-        trademarks.append(tmp)
+        trademarks.append(
+            Trademark(
+                trademark.get("mark_identification"),
+                trademark.get("serial_number"),
+                trademark.get("code"),
+                trademark.get("case_file_descriptions"),
+                trademark.get("case_owners"),
+                trademark.get("date_filed"),
+                trademark.get("activeStatus")
+            )
+        )
 
     return trademarks
+
 
 def get_search_history(email: str):
     response = searchTable.query(
@@ -114,4 +121,6 @@ def get_search_history(email: str):
 
     items = response['Items']
 
-    return items
+    sorted_data = sorted(items, key=lambda x: datetime.strptime(x['date'], "%m/%d/%Y, %H:%M:%S"), reverse=True)
+
+    return sorted_data

@@ -24,13 +24,14 @@ class Trademark:
     def to_dict(self):
 
         # Get rid of duplicates in lists (includes case sensitivity)
-        case_owners = list(set([s.lower() for s in self.case_file_descriptions]))
+        case_owners = list(set([s.lower() for s in self.case_owners]))
         case_file_descriptions = list(set([s.lower() for s in self.case_file_descriptions]))
+        codes = list(set([s.lower() for s in self.codes]))
 
         return {
             'mark_identification': self.mark_identification,
             'serial_number': self.serial_number,
-            'codes': list(set(self.codes)),
+            'codes': codes,
             'case_file_descriptions': case_file_descriptions,
             'case_owners': case_owners,
             'date_filed': self.date_filed,

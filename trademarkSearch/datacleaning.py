@@ -15,7 +15,7 @@ from lxml import etree
 # This function does all the downloading, unzipping, and cleaning of the files
 def download_and_process_files():
     # url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-10.zip"
-    base_url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-"
+    # base_url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-"
 
     urls = [
         'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-01.zip',
@@ -56,7 +56,7 @@ def download_file(url):
         return
 
     # This generates a random string name for the zipfile so that the threads do not overwrite each other
-    filename = ''.join(random.choice(string.ascii_letters) for i in range(10)) + ".zip"
+    filename = ''.join(random.choice(string.ascii_letters) for _ in range(10)) + ".zip"
 
     try:
         with open(filename, 'wb') as file:

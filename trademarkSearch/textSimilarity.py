@@ -28,7 +28,8 @@ class BertTextSimilarity:
 def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
     for trademark in trademarks:
         if trademark.mark_identification == inputText:
-            infringementList.append(trademark)
+            pair = (trademark, "red")
+            infringementList.append(pair)
             trademarks.remove(trademark)
 
 
@@ -36,13 +37,15 @@ def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
 def judge_phonetic_similarity(trademarks: list, inputText: str, infringementList: list):
     for trademark in trademarks:
         if phonetics.dmetaphone(trademark.mark_identification) == phonetics.dmetaphone(inputText):
-            infringementList.append(trademark)
+            pair = (trademark, "red")
+            infringementList.append(pair)
             trademarks.remove(trademark)
 
 
 # Eventually do language similarity
 def judge_language_similarity(trademarks: list, inputText: str, infringementList: list):
     pass
+
 
 # This is not good, consider just scrapping this
 def judge_BERT(trademarks: list, inputText: str, infringementList: list):
@@ -54,14 +57,13 @@ def judge_BERT(trademarks: list, inputText: str, infringementList: list):
 
 
 # This judges similarity of text
-# TODO: Decide which is best case (or use all)
-# - fuzz.ratio()
-# - fuzz.partial_ratio()
-# - fuzz.token_sort_ratio()
-# - fuzz.token_set_ratio()
-
+# - fuzz.ratio() - Helpful for comparing two strings that should be nearly identical
+# - fuzz.partial_ratio() - Helpful when dealing with data that might have extra characters or noise
+# - fuzz.token_sort_ratio() - Helpful when comparing strings where the order of the words might vary, such as sentence paraphrasing
+# - fuzz.token_set_ratio() - Helpful when you need a more robust comparison, including different word orders, duplicate words, and additional words
 def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
     for trademark in trademarks:
         if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
-            infringementList.append(trademark)
+            pair = (trademark, "yellow")
+            infringementList.append(pair)
             trademarks.remove(trademark)

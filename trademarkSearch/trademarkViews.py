@@ -17,15 +17,16 @@ from salvusbackend.transformer import classify_code, get_label_decoder
 def markDatabaseSearch(request):
     try:
 
-        # auth_header = request.META.get('HTTP_AUTHORIZATION', '')  # Fetch the header
-        # token = auth_header.split(' ')[1]  # Remove 'Bearer '
-        # verify_authtoken(token)
+        # TODO: add secondary index to user table to search by authtoken
+        # authtoken = request.headers.get('Authorization')  # Fetch the header
+        # verify_authtoken(request.GET.get('email'), authtoken)
 
         inputMark = request.GET.get('query')
         typeCode = request.GET.get('code')
         companyName = request.GET.get('companyName')
         email = request.GET.get('email')
 
+        # This list will contain a list of Tuple(trademarkObject, riskLevel)
         infringementList = []
 
         marks = db.get_trademarks_by_code(typeCode)
@@ -35,8 +36,8 @@ def markDatabaseSearch(request):
         ts.judge_ratio_fuzzy(marks, inputMark, infringementList)
         ts.judge_phonetic_similarity(marks, inputMark, infringementList)
 
-        return JsonResponse([infringement.to_dict() for infringement in infringementList], safe=False,
-                            status=200)
+        return JsonResponse([{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
+                             for infringement in infringementList], safe=False, status=200)
 
     except Exception as e:
         logger.error(e)
@@ -82,7 +83,6 @@ def verify_authtoken(email, authtoken):
     except Exception as e:
         logger.error(e)
         return False
-
 
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
