@@ -18,7 +18,8 @@ def register(request):
         authtoken, expDate = generate_authtoken()
         update_user_authtoken(body['email'], authtoken, expDate)
 
-        return JsonResponse({"message": "Successfully Registered"}, status=200)
+        return JsonResponse({"message": "Successfully Registered In", "authtoken": authtoken, "expDate": expDate},
+                            status=200)
     except Exception as e:
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)

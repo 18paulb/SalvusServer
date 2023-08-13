@@ -44,6 +44,22 @@ def find_password_by_username(email):
         print(e)
 
 
+# def find_userInfo_by_authtoken(authtoken):
+#     try:
+#         response = table.scan(
+#             ProjectionExpression='email, company_name, userAuthentication',
+#         )
+#
+#         # Convert Into String
+#         for item in response['Items']:
+#             if item['userAuthentication']['authtoken'] == authtoken:
+#                 return item['email'], item['company_name']
+#         return None, None
+#     except Exception as e:
+#         logger.error(e)
+#         print(e)
+
+
 def update_user_authtoken(email, authtoken, expDate):
     try:
         table.update_item(
@@ -51,11 +67,13 @@ def update_user_authtoken(email, authtoken, expDate):
                 'email': email
             },
             UpdateExpression="set userAuthentication.authToken = :a",
+            # UpdateExpression="set authtoken = :a",
             ExpressionAttributeValues={
                 ':a': {
                     "authtoken": authtoken,
                     "expDate": expDate.isoformat()
                 }
+                # ':a': authtoken
             }
         )
     except Exception as e:

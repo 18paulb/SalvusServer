@@ -58,8 +58,8 @@ def verify_password(hashed_password, provided_password):
 
 def generate_authtoken():
     SECRET_KEY = config('AUTHTOKEN_SECRET_KEY')
-    # Create a JWT token with an expiration time of 1 hour
-    payload = {"sub": "admin", "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)}
+    # Create a JWT token with an expiration time of 24 hour
+    payload = {"sub": "user", "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)}
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token, payload["exp"]
 

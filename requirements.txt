@@ -10,3 +10,5 @@ fuzzywuzzy
 PyJWT
 torch
 requests
+phonetics
+metaphone
