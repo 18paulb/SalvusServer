@@ -66,8 +66,8 @@ def update_user_authtoken(email, authtoken, expDate):
             Key={
                 'email': email
             },
-            # UpdateExpression="set userAuthentication.authToken = :a",
-            UpdateExpression="set authtoken = :a",
+            UpdateExpression="set userAuthentication.authToken = :a",
+            # UpdateExpression="set authtoken = :a",
             ExpressionAttributeValues={
                 ':a': {
                     "authtoken": authtoken,
