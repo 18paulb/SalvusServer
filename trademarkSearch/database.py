@@ -1,5 +1,5 @@
 import boto3
-from trademarkSearch.models import Trademark, make_trademark_objects
+from trademarkSearch.models import Trademark
 import uuid
 from salvusbackend.logger import logger
 from boto3.dynamodb.conditions import Key
@@ -12,8 +12,6 @@ searchTable = dynamodb.Table('Searches')
 """
 This function takes in a list of trademark objects and inserts them into the database
 """
-
-
 def insert_into_table(trademarks: list):
     i = 1
     with table.batch_writer() as batch:
@@ -121,6 +119,7 @@ def get_search_history(email: str):
 
     items = response['Items']
 
+    # Sorts the data so that the most recent searches appear first
     sorted_data = sorted(items, key=lambda x: datetime.strptime(x['date'], "%m/%d/%Y, %H:%M:%S"), reverse=True)
 
     return sorted_data

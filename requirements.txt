@@ -12,3 +12,4 @@ torch
 requests
 phonetics
 metaphone
+decouple

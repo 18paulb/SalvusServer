@@ -8,7 +8,7 @@ from trademarkSearch.datacleaning import download_and_process_files, get_trainin
 from trademarkSearch.models import Trademark, make_trademark_objects
 import os
 from salvusbackend.logger import logger
-from authentication.database import compare_token_to_database
+from authentication.database import compare_token_to_database, find_userInfo_by_authtoken
 from salvusbackend.transformer import classify_code, get_label_decoder
 
 
@@ -17,14 +17,14 @@ from salvusbackend.transformer import classify_code, get_label_decoder
 def markDatabaseSearch(request):
     try:
 
-        # TODO: add secondary index to user table to search by authtoken
-        # authtoken = request.headers.get('Authorization')  # Fetch the header
-        # verify_authtoken(request.GET.get('email'), authtoken)
+        userInfo = find_userInfo_by_authtoken(request.headers.get('Authorization'))
+        if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
+            return HttpResponse("Unauthorized", status=401)
 
         inputMark = request.GET.get('query')
         typeCode = request.GET.get('code')
-        companyName = request.GET.get('companyName')
-        email = request.GET.get('email')
+        email = userInfo[0]
+        companyName = userInfo[1]
 
         # This list will contain a list of Tuple(trademarkObject, riskLevel)
         infringementList = []
@@ -68,8 +68,11 @@ def classifyCode(request):
 
 def getSearchHistory(request):
     try:
-        email = request.GET.get('email')
-        return JsonResponse(db.get_search_history(email), safe=False, status=200)
+        userInfo = find_userInfo_by_authtoken(request.headers.get('Authorization'))
+        if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
+            return HttpResponse("Unauthorized", status=401)
+
+        return JsonResponse(db.get_search_history(userInfo[0]), safe=False, status=200)
     except Exception as e:
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)

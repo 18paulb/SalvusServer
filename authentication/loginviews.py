@@ -62,6 +62,3 @@ def generate_authtoken():
     payload = {"sub": "user", "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)}
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token, payload["exp"]
-
-
-
