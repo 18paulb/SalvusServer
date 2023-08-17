@@ -29,7 +29,8 @@ def read_data_split(json_file_path):
         labels.append(item['code'])
 
     # This will tell you how many labels you have (put in the model)
-    counter = Counter(labels)
+    # counter = Counter(labels)
+
     # As of right now, reduce the data to 1000 each per code
     return texts, labels
 
