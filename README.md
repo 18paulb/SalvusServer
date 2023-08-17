@@ -14,6 +14,9 @@ https://www.uspto.gov/web/offices/com/sol/og/con/files/cons181.htm
 Explains XML of Bulk Download
 https://www.uspto.gov/sites/default/files/products/applications-documentation.pdf
 
+Trademark Registered Images
+https://developer.uspto.gov/product/trademark-24-hour-box-and-supplemental
+
 If we want to use it on Trademark infringement. We may have to get Data of trademark infringement cases and label them
 
 - But could we get enough data for it to be viable?
