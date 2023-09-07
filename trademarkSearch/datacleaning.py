@@ -38,7 +38,7 @@ def download_and_process_files():
 
     with ThreadPoolExecutor(max_workers=5) as executor:
         for i, filename in enumerate(fileNames, 1):
-            executor.submit(clean_data, filename, "cleaned" + str(i) + ".xml")
+            executor.submit(clean_data, filename, "cleaned-" + filename)
 
     # Removes original filenames as to only leave behind the cleaned files
     for filename in fileNames:
