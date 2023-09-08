@@ -4,3 +4,6 @@ db.sqlite3
 *.xml
 file.log
 .env
+.DS_Store
+model_training_data.json
+trademarkSearch/result
