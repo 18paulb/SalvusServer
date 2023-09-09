@@ -91,22 +91,20 @@ This function takes in a code and returns queries the database for all trademark
 
 
 def get_trademarks_by_code(code: str, activeStatus: str, lastEvaluatedKey: any):
-    lastEvaluatedKey = json.loads(lastEvaluatedKey)
+    query_params = {
+        "IndexName": 'code-index',
+        "KeyConditionExpression": boto3.dynamodb.conditions.Key('code').eq(code),
+        "FilterExpression": Attr('activeStatus').eq(activeStatus),
+    }
 
-    response = table.query(
-        IndexName='code-index',
-        KeyConditionExpression=boto3.dynamodb.conditions.Key('code').eq(code),
-        FilterExpression=Attr('activeStatus').eq(activeStatus),
-        ExclusiveStartKey=lastEvaluatedKey
-    )
+    if lastEvaluatedKey is not None:
+        query_params["ExclusiveStartKey"] = json.loads(lastEvaluatedKey)
+
+    response = table.query(**query_params)
 
     items = response['Items']
-    lastKey = response['LastEvaluatedKey']
+    lastKey = response.get('LastEvaluatedKey', None)
     trademarks = []
-
-    while 'LastEvaluatedKey' in response:
-        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-        items.extend(response['Items'])
 
     for trademark in items:
         trademarks.append(
@@ -127,15 +125,18 @@ def get_trademarks_by_code(code: str, activeStatus: str, lastEvaluatedKey: any):
 def get_all_trademarks(activeStatus: str, lastEvaluatedKey: any):
     # The exclusiveStartKey and the lastEvaluatedKey allows for pagination of search results of scan returns too much data
     # if lastEvaluatedKey is None, then scan should start from beginning of the table
-    lastEvaluatedKey = json.loads(lastEvaluatedKey)
+    query_params = {
+        "IndexName": 'code-index',
+        "FilterExpression": Attr('activeStatus').eq(activeStatus),
+    }
 
-    response = table.scan(
-        FilterExpression=Attr('activeStatus').eq(activeStatus),
-        ExclusiveStartKey=lastEvaluatedKey
-    )
+    if lastEvaluatedKey is not None:
+        query_params["ExclusiveStartKey"] = json.loads(lastEvaluatedKey)
+
+    response = table.scan(**query_params)
 
     items = response['Items']
-    lastKey = response['LastEvaluatedKey']
+    lastKey = response.get('LastEvaluatedKey', None)
     trademarks = []
 
     for trademark in items:
