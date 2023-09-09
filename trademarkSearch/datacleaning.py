@@ -141,40 +141,30 @@ def clean_data(source_file_path, destination_file_path):
 
 # Right now just get the code and descriptions from any case-file that only has one classification
 def get_training_data(source_file_path):
-
     tree = etree.parse(source_file_path)
     root = tree.getroot()
     case_files = root.findall('.//case-file')
 
     codes_descriptions = []
-
     code = None
-
     code_descriptions_map = {}
 
     for case in case_files:
         try:
             classifications = case.findall('.//classifications/classification')
             case_file_statements = case.findall('.//case-file-statements/case-file-statement')
-        except Exception as e:
-            logger.error(e)
-            continue
 
-        # We're not going to worry about if there are multiple classifications for now, still have to figure out how to handle that
-        if len(classifications) == 1:
-            try:
+            # We're not going to worry about if there are multiple classifications for now, still have to figure out how to handle that
+            if len(classifications) == 1:
+
                 if classifications[0].find('.//primary-code') is not None:
                     code = classifications[0].find('.//primary-code').text
-            except Exception as e:
-                logger.error(e)
+            else:
                 continue
-        else:
-            continue
 
-        for file_statement in case_file_statements:
-            type_code = None
-            description = None
-            try:
+            for file_statement in case_file_statements:
+                type_code = None
+                description = None
                 # TODO: There are issues if there are multiple statements, causes some labels to not be correct
                 if file_statement.find(".//type-code") is not None and file_statement.find(".//text") is not None:
                     type_code = file_statement.find(".//type-code").text
@@ -183,16 +173,16 @@ def get_training_data(source_file_path):
                     if code not in code_descriptions_map:
                         code_descriptions_map[code] = []
 
-            except Exception as e:
-                print(e)
-                continue
+                # Makes sure to only get the GS codes and not the other ones
+                if type_code[0:2] == "GS" and description is not None and code is not None:
 
-            # Makes sure to only get the GS codes and not the other ones
-            if type_code[0:2] == "GS" and description is not None and code is not None:
+                    # Right now we are limiting the data for each code to 1000, this can be changed later
+                    if len(code_descriptions_map[code]) < 1000:
+                        code_descriptions_map[code].append(description)
 
-                # Right now we are limiting the data for each code to 1000, this can be changed later
-                if len(code_descriptions_map[code]) < 1000:
-                    code_descriptions_map[code].append(description)
+        except Exception as e:
+            logger.error(e)
+            continue
 
     # For each index in the value, return a pair of the key and the value
     for key, value in code_descriptions_map.items():
