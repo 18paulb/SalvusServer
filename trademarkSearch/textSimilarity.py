@@ -67,29 +67,35 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
     # - However this will also cause false positives, but we are not worried about that right now
 
     for trademark in trademarks:
-        if fuzz.ratio(trademark.mark_identification, inputText) > 50:
+        if fuzz.ratio(trademark.mark_identification, inputText) > 90:
             pair = (trademark, "red")
             infringementList.append(pair)
             trademarks.remove(trademark)
             continue
 
-        if fuzz.partial_ratio(trademark.mark_identification, inputText) > 50:
+        if fuzz.partial_ratio(trademark.mark_identification, inputText) > 80:
             pair = (trademark, "yellow")
             infringementList.append(pair)
             trademarks.remove(trademark)
             continue
 
-        if fuzz.token_sort_ratio(trademark.mark_identification, inputText) > 50:
+        if fuzz.token_sort_ratio(trademark.mark_identification, inputText) > 80:
             pair = (trademark, "yellow")
             infringementList.append(pair)
             trademarks.remove(trademark)
             continue
 
-        if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 50:
+        if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
             pair = (trademark, "green")
             infringementList.append(pair)
             trademarks.remove(trademark)
             continue
+
+        # What I had before
+        # if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
+        #     pair = (trademark, "yellow")
+        #     infringementList.append(pair)
+        #     trademarks.remove(trademark)
 
 
 def get_similar_trademarks(trademarks: list, inputText: str, infringementList: list):
