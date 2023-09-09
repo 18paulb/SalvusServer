@@ -3,7 +3,7 @@ import random
 import re
 import string
 import zipfile
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from salvusbackend.logger import logger
 
 import requests
@@ -25,6 +25,7 @@ def download_and_process_files():
         'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-05.zip'
     ]
 
+    # Since downloading is I/O multi-threading works perfectly for this
     with ThreadPoolExecutor(max_workers=5) as executor:
         future = [executor.submit(download_file, url) for url in urls]
 
@@ -36,7 +37,8 @@ def download_and_process_files():
 
     print("Starting DataCleaning")
 
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    # Since this is a CPU bound operation, multi-threading won't work because of the GIL, thus you need to use multi-processing
+    with ProcessPoolExecutor(max_workers=5) as executor:
         for i, filename in enumerate(fileNames, 1):
             executor.submit(clean_data, filename, "cleaned-" + filename)
 
