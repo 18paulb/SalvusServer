@@ -45,7 +45,7 @@ def find_password_by_username(email):
         print(e)
 
 
-def find_userInfo_by_authtoken(authtoken):
+def find_user_info_by_authtoken(authtoken):
     try:
         response = table.query(
             IndexName='authtoken-index',  # Name of the Global Secondary Index

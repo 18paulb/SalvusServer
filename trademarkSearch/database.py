@@ -122,11 +122,10 @@ def get_trademarks_by_code(code: str, activeStatus: str, lastEvaluatedKey: any):
     return trademarks, lastKey
 
 
+# Consider having this return all the codes of a trademark and not just one
 def get_all_trademarks(activeStatus: str, lastEvaluatedKey: any):
     # The exclusiveStartKey and the lastEvaluatedKey allows for pagination of search results of scan returns too much data
-    # if lastEvaluatedKey is None, then scan should start from beginning of the table
     query_params = {
-        "IndexName": 'code-index',
         "FilterExpression": Attr('activeStatus').eq(activeStatus),
     }
 

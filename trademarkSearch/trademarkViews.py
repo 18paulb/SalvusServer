@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 import trademarkSearch.database as db
 import trademarkSearch.textSimilarity as ts
 from salvusbackend.logger import logger
-from authentication.database import find_userInfo_by_authtoken
+from authentication.database import find_user_info_by_authtoken
 from salvusbackend.transformer import classify_code, get_label_decoder
 from authentication.loginviews import verify_authtoken
 from trademarkSearch.datacleaning import download_and_process_files, get_training_data
@@ -17,7 +17,7 @@ import os
 def same_mark_search(request):
     try:
 
-        userInfo = find_userInfo_by_authtoken(request.headers.get('Authorization'))
+        userInfo = find_user_info_by_authtoken(request.headers.get('Authorization'))
         if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
             return HttpResponse("Unauthorized", status=401)
 
@@ -51,7 +51,7 @@ def same_mark_search(request):
 
 
 def all_mark_search(request):
-    userInfo = find_userInfo_by_authtoken(request.headers.get('Authorization'))
+    userInfo = find_user_info_by_authtoken(request.headers.get('Authorization'))
     if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
         return HttpResponse("Unauthorized", status=401)
 
@@ -103,7 +103,7 @@ def classifyCode(request):
 
 def getSearchHistory(request):
     try:
-        userInfo = find_userInfo_by_authtoken(request.headers.get('Authorization'))
+        userInfo = find_user_info_by_authtoken(request.headers.get('Authorization'))
         if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
             return HttpResponse("Unauthorized", status=401)
 
