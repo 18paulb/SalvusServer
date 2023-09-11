@@ -1,8 +1,10 @@
+import json
+
 import boto3
 from trademarkSearch.models import Trademark
 import uuid
 from salvusbackend.logger import logger
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
@@ -12,6 +14,8 @@ searchTable = dynamodb.Table('Searches')
 """
 This function takes in a list of trademark objects and inserts them into the database
 """
+
+
 def insert_into_table(trademarks: list):
     i = 1
     with table.batch_writer() as batch:
@@ -86,13 +90,20 @@ This function takes in a code and returns queries the database for all trademark
 """
 
 
-def get_trademarks_by_code(code: str):
-    response = table.query(
-        IndexName='code-index',
-        KeyConditionExpression=boto3.dynamodb.conditions.Key('code').eq(code)
-    )
+def get_trademarks_by_code(code: str, activeStatus: str, lastEvaluatedKey: any):
+    query_params = {
+        "IndexName": 'code-index',
+        "KeyConditionExpression": boto3.dynamodb.conditions.Key('code').eq(code),
+        "FilterExpression": Attr('activeStatus').eq(activeStatus),
+    }
+
+    if lastEvaluatedKey is not None:
+        query_params["ExclusiveStartKey"] = json.loads(lastEvaluatedKey)
+
+    response = table.query(**query_params)
 
     items = response['Items']
+    lastKey = response.get('LastEvaluatedKey', None)
     trademarks = []
 
     for trademark in items:
@@ -108,7 +119,39 @@ def get_trademarks_by_code(code: str):
             )
         )
 
-    return trademarks
+    return trademarks, lastKey
+
+
+# Consider having this return all the codes of a trademark and not just one
+def get_all_trademarks(activeStatus: str, lastEvaluatedKey: any):
+    # The exclusiveStartKey and the lastEvaluatedKey allows for pagination of search results of scan returns too much data
+    query_params = {
+        "FilterExpression": Attr('activeStatus').eq(activeStatus),
+    }
+
+    if lastEvaluatedKey is not None:
+        query_params["ExclusiveStartKey"] = json.loads(lastEvaluatedKey)
+
+    response = table.scan(**query_params)
+
+    items = response['Items']
+    lastKey = response.get('LastEvaluatedKey', None)
+    trademarks = []
+
+    for trademark in items:
+        trademarks.append(
+            Trademark(
+                trademark.get("mark_identification"),
+                trademark.get("serial_number"),
+                trademark.get("code"),
+                trademark.get("case_file_descriptions"),
+                trademark.get("case_owners"),
+                trademark.get("date_filed"),
+                trademark.get("activeStatus")
+            )
+        )
+
+    return [trademarks, lastKey]
 
 
 def get_search_history(email: str):

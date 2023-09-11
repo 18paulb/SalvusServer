@@ -4,44 +4,79 @@ from django.http import HttpResponse, JsonResponse
 
 import trademarkSearch.database as db
 import trademarkSearch.textSimilarity as ts
-from trademarkSearch.datacleaning import download_and_process_files, get_training_data
-from trademarkSearch.models import Trademark, make_trademark_objects
-import os
 from salvusbackend.logger import logger
-from authentication.database import compare_token_to_database, find_userInfo_by_authtoken
+from authentication.database import find_user_info_by_authtoken
 from salvusbackend.transformer import classify_code, get_label_decoder
+from authentication.loginviews import verify_authtoken
+from trademarkSearch.datacleaning import download_and_process_files, get_training_data
+import os
 
 
 # Create your views here.
 
-def markDatabaseSearch(request):
+def same_mark_search(request):
     try:
 
-        userInfo = find_userInfo_by_authtoken(request.headers.get('Authorization'))
+        userInfo = find_user_info_by_authtoken(request.headers.get('Authorization'))
         if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
             return HttpResponse("Unauthorized", status=401)
 
         inputMark = request.GET.get('query')
         typeCode = request.GET.get('code')
+        activeStatus = request.GET.get('activeStatus')
+        lastEvaluatedKey = request.GET.get('lastEvaluatedKey')
+
         email = userInfo[0]
         companyName = userInfo[1]
 
         # This list will contain a list of Tuple(trademarkObject, riskLevel)
         infringementList = []
 
-        marks = db.get_trademarks_by_code(typeCode)
+        marks, lastEvaluatedKey = db.get_trademarks_by_code(typeCode, activeStatus, lastEvaluatedKey)
         db.save_search_into_table(inputMark, email, companyName, typeCode)
 
-        ts.judge_exact_match(marks, inputMark, infringementList)
-        ts.judge_ratio_fuzzy(marks, inputMark, infringementList)
-        ts.judge_phonetic_similarity(marks, inputMark, infringementList)
+        ts.get_similar_trademarks(marks, inputMark, infringementList)
 
-        return JsonResponse([{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
-                             for infringement in infringementList], safe=False, status=200)
+        response_data = {
+            'data': [{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
+                     for infringement in infringementList],
+            'lastEvaluatedKey': lastEvaluatedKey
+        }
+
+        return JsonResponse(response_data, safe=False, status=200)
 
     except Exception as e:
         logger.error(e)
         return HttpResponse("An error has occurred", status=500)
+
+
+def all_mark_search(request):
+    userInfo = find_user_info_by_authtoken(request.headers.get('Authorization'))
+    if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
+        return HttpResponse("Unauthorized", status=401)
+
+    inputMark = request.GET.get('query')
+    activeStatus = request.GET.get('activeStatus')
+    lastEvaluatedKey = request.GET.get('lastEvaluatedKey')
+
+    email = userInfo[0]
+    companyName = userInfo[1]
+
+    # This list will contain a list of Tuple(trademarkObject, riskLevel)
+    infringementList = []
+
+    marks, lastEvaluatedKey = db.get_all_trademarks(activeStatus, lastEvaluatedKey)
+    db.save_search_into_table(inputMark, email, companyName, None)
+
+    ts.get_similar_trademarks(marks, inputMark, infringementList)
+
+    response_data = {
+        'data': [{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
+                 for infringement in infringementList],
+        'lastEvaluatedKey': lastEvaluatedKey
+    }
+
+    return JsonResponse(response_data, safe=False, status=200)
 
 
 def classifyCode(request):
@@ -68,7 +103,7 @@ def classifyCode(request):
 
 def getSearchHistory(request):
     try:
-        userInfo = find_userInfo_by_authtoken(request.headers.get('Authorization'))
+        userInfo = find_user_info_by_authtoken(request.headers.get('Authorization'))
         if not verify_authtoken(userInfo[0], request.headers.get('Authorization')):
             return HttpResponse("Unauthorized", status=401)
 
@@ -77,15 +112,6 @@ def getSearchHistory(request):
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
 
-
-def verify_authtoken(email, authtoken):
-    try:
-        # Finds the hashed password in the database
-        return compare_token_to_database(email, authtoken)
-
-    except Exception as e:
-        logger.error(e)
-        return False
 
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()

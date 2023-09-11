@@ -26,7 +26,12 @@ class Trademark:
         # Get rid of duplicates in lists (includes case sensitivity)
         case_owners = list(set([s.lower() for s in self.case_owners]))
         case_file_descriptions = list(set([s.lower() for s in self.case_file_descriptions]))
-        codes = list(set([s.lower() for s in self.codes]))
+        codes = None
+        if self.codes is not list:
+            codes = self.codes
+
+        if self.codes is list:
+            codes = list(set([s.lower() for s in self.codes]))
 
         return {
             'mark_identification': self.mark_identification,

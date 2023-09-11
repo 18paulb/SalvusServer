@@ -7,9 +7,7 @@ from boto3.dynamodb.types import Binary
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from decouple import config
-from django.middleware.csrf import get_token
-
-from authentication.database import find_password_by_username, update_user_authtoken
+from authentication.database import find_password_by_username, update_user_authtoken, compare_token_to_database
 from salvusbackend.logger import logger
 
 
@@ -62,3 +60,13 @@ def generate_authtoken():
     payload = {"sub": "user", "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)}
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token, payload["exp"]
+
+
+def verify_authtoken(email, authtoken):
+    try:
+        # Finds the hashed password in the database
+        return compare_token_to_database(email, authtoken)
+
+    except Exception as e:
+        logger.error(e)
+        return False
