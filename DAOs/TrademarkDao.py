@@ -3,13 +3,17 @@ import boto3
 from trademarkSearch.models import Trademark
 from salvusbackend.logger import logger
 from boto3.dynamodb.conditions import Key, Attr
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 
 class TrademarkDao:
 
     def __init__(self):
         self.dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-        self.table = self.dynamodb.Table('Trademarks')
+        self.table = self.dynamodb.Table('Trademark')
+        self.counter = 0  # Shared counter
+        self.lock = threading.Lock()  # Lock to make updating the counter thread-safe
 
     def insert_batch(self, trademarks: list):
         i = 1

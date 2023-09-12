@@ -78,6 +78,10 @@ def make_trademark_objects(filename):
             newTrademark.date_filed = date_filed.text.lower() if date_filed is not None else ""
             newTrademark.activeStatus = code_map.get(status_code.text.lower()) if status_code is not None else ""
 
+            # Right now just only put live trademarks in the database
+            if newTrademark.activeStatus != "live":
+                continue
+
             for code in codes:
                 newTrademark.codes.append(code.text)
 
