@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from trademarkSearch import trademarkViews
+from trademarkSearch import trademarkviews
 from authentication import registerviews
 from authentication import loginviews
 
@@ -23,5 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('trademark/', include('trademarkSearch.urls')),
     path('authentication/', include('authentication.urls')),
-    path('searchHistory', trademarkViews.getSearchHistory, name='search_history')
+    path('searchHistory', trademarkviews.getSearchHistory, name='search_history')
 ]

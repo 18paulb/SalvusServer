@@ -1,9 +1,6 @@
-from django.db import models
 import xml.etree.ElementTree as ET
 import json
 
-
-# This is not a django model, but it is a model for the trademark object
 class Trademark:
 
     def __init__(self, mark_identification=None, serial_number=None, codes=None, case_file_descriptions=None,

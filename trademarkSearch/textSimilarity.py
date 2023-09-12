@@ -1,37 +1,5 @@
-from transformers import BertTokenizer, BertModel
-from sklearn.metrics.pairwise import cosine_similarity
-
 from fuzzywuzzy import fuzz
 import phonetics
-from trademarkSearch.models import Trademark
-
-
-class BertTextSimilarity:
-    def __init__(self):
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        self.model = BertModel.from_pretrained('bert-base-uncased')
-
-    def get_sentence_embedding(self, text):
-        inputs = self.tokenizer(text, return_tensors='pt', truncation=True, padding=True)
-        outputs = self.model(**inputs)
-        # We use the average of the last hidden state as sentence embedding
-        sentence_embedding = outputs.last_hidden_state.mean(dim=1).detach().numpy()
-        return sentence_embedding
-
-    def compute_similarity(self, text1, text2):
-        embedding1 = self.get_sentence_embedding(text1)
-        embedding2 = self.get_sentence_embedding(text2)
-        similarity = cosine_similarity(embedding1, embedding2)
-        return similarity
-
-
-# This is not good, consider just scrapping this
-def judge_BERT(trademarks: list, inputText: str, infringementList: list):
-    bert = BertTextSimilarity()
-    for trademark in trademarks:
-        if bert.compute_similarity(trademark.mark_identification, inputText) > 0.75:
-            infringementList.append(trademark)
-            trademarks.remove(trademark)
 
 
 def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
@@ -90,12 +58,6 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
             infringementList.append(pair)
             trademarks.remove(trademark)
             continue
-
-        # What I had before
-        # if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
-        #     pair = (trademark, "yellow")
-        #     infringementList.append(pair)
-        #     trademarks.remove(trademark)
 
 
 def get_similar_trademarks(trademarks: list, inputText: str, infringementList: list):
