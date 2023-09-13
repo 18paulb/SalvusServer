@@ -48,18 +48,6 @@ class TrademarkDao:
                                     "case_file_descriptions": trademark.case_file_descriptions
                                 }
                             )
-                    else:
-                        batch.put_item(
-                            Item={
-                                "mark_identification": trademark.mark_identification,
-                                "serial_number": trademark.serial_number,
-                                "case_owners": trademark.case_owners,
-                                "date_filed": trademark.date_filed,
-                                "code": trademark.codes[0],
-                                "activeStatus": trademark.activeStatus,
-                                "case_file_descriptions": trademark.case_file_descriptions
-                            }
-                        )
                 except Exception as e:
                     logger.error(e)
                     continue
