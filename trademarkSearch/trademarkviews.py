@@ -12,6 +12,8 @@ from salvusbackend.transformer import classify_code, get_label_decoder
 from trademarkSearch.datacleaning import download_and_process_files, get_training_data
 import os
 
+from trademarkSearch.models import make_trademark_objects
+
 
 # Create your views here.
 
@@ -136,14 +138,17 @@ def getSearchHistory(request):
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
 #
-# models = []
+# td = TrademarkDao()
+#
+# trademarkObjects = []
 # for file in os.listdir():
 #     if file.endswith(".xml"):
-#         models.extend(make_trademark_objects(file))
+#         trademarkObjects.extend(make_trademark_objects(file))
 #
-# print("Inserting into database")
-# db.insert_into_table(models)
-# print("Finished inserting into database")
+# print("Inserting ", len(trademarkObjects), " into database")
+# td.insert_batch(trademarkObjects)
+# # td.multi_thread_insert(trademarkObjects)
+# print("Inserted around:", len(trademarkObjects), " items")
 
 # This code gets the training data from the xml files and puts it into a json file
 # codes = []
