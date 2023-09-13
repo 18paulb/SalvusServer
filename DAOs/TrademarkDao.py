@@ -55,9 +55,10 @@ class TrademarkDao:
 
     def search_by_code(self, code: str, activeStatus: str, lastEvaluatedKey: any):
         query_params = {
-            "IndexName": 'code-index',
+            "IndexName": 'code-date_filed-index',
             "KeyConditionExpression": boto3.dynamodb.conditions.Key('code').eq(code),
             "FilterExpression": Attr('activeStatus').eq(activeStatus),
+            'ScanIndexForward': False,
         }
 
         if lastEvaluatedKey is not None:
