@@ -1,5 +1,5 @@
 from django.urls import path
-import trademarkSearch.trademarkViews as trademarkViews
+import trademarkSearch.trademarkviews as trademarkViews
 from authentication import loginviews
 from authentication import registerviews
 

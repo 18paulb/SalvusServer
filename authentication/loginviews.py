@@ -7,8 +7,9 @@ from boto3.dynamodb.types import Binary
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from decouple import config
-from authentication.database import find_password_by_username, update_user_authtoken, compare_token_to_database
 from salvusbackend.logger import logger
+from DAOs.AuthtokenDao import AuthtokenDao
+from DAOs.UserDao import UserDao
 
 
 # TODO: Do not have csrf_exempt in production
@@ -20,8 +21,11 @@ def login(request):
         email = body['email']
         password = body['password']
 
+        userDao = UserDao()
+        authtokenDao = AuthtokenDao()
+
         # Finds the hashed password in the database
-        hashedPassword = find_password_by_username(email)
+        hashedPassword = userDao.find_password_by_username(email)
 
         if hashedPassword is None:
             return JsonResponse({"message": "Username not found"}, status=401)
@@ -32,7 +36,7 @@ def login(request):
         if success:
             # Creates new authtoken and updates it in the database
             authtoken, expDate = generate_authtoken()
-            update_user_authtoken(email, authtoken, expDate)
+            authtokenDao.update_user_authtoken(email, authtoken, expDate)
 
             return JsonResponse({"message": "Successfully Logged In", "authtoken": authtoken, "expDate": expDate},
                                 status=200)
@@ -61,12 +65,3 @@ def generate_authtoken():
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token, payload["exp"]
 
-
-def verify_authtoken(email, authtoken):
-    try:
-        # Finds the hashed password in the database
-        return compare_token_to_database(email, authtoken)
-
-    except Exception as e:
-        logger.error(e)
-        return False

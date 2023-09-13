@@ -1,9 +1,6 @@
-from django.db import models
 import xml.etree.ElementTree as ET
 import json
 
-
-# This is not a django model, but it is a model for the trademark object
 class Trademark:
 
     def __init__(self, mark_identification=None, serial_number=None, codes=None, case_file_descriptions=None,
@@ -80,6 +77,10 @@ def make_trademark_objects(filename):
             newTrademark.mark_identification = mark.text.lower() if mark is not None else ""
             newTrademark.date_filed = date_filed.text.lower() if date_filed is not None else ""
             newTrademark.activeStatus = code_map.get(status_code.text.lower()) if status_code is not None else ""
+
+            # Right now just only put live trademarks in the database
+            if newTrademark.activeStatus != "live":
+                continue
 
             for code in codes:
                 newTrademark.codes.append(code.text)
