@@ -17,16 +17,9 @@ def download_and_process_files():
     # url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-10.zip"
     # base_url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-"
     urls = [
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-01.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-02.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-03.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-04.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-05.zip'
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-23.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-24.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-25.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-26.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-27.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-76.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-77.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-78.zip',
     ]
 
     # Since downloading is I/O multi-threading works perfectly for this
