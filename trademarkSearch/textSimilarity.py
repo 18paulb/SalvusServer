@@ -1,5 +1,6 @@
-from fuzzywuzzy import fuzz
+# from fuzzywuzzy import fuzz
 import phonetics
+from rapidfuzz import fuzz
 
 
 def judge_exact_match(trademarks: list, inputText: str, infringementList: list):
@@ -35,32 +36,35 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
     # - However this will also cause false positives, but we are not worried about that right now
 
     for trademark in trademarks:
-        if fuzz.ratio(trademark.mark_identification, inputText) > 90:
+        if fuzz.ratio(trademark.mark_identification, inputText) > 50:
             pair = (trademark, "red")
             infringementList.append(pair)
             trademarks.remove(trademark)
             continue
 
-        if fuzz.partial_ratio(trademark.mark_identification, inputText) > 80:
-            pair = (trademark, "yellow")
-            infringementList.append(pair)
-            trademarks.remove(trademark)
-            continue
-
-        if fuzz.token_sort_ratio(trademark.mark_identification, inputText) > 80:
-            pair = (trademark, "yellow")
-            infringementList.append(pair)
-            trademarks.remove(trademark)
-            continue
-
-        if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
-            pair = (trademark, "green")
-            infringementList.append(pair)
-            trademarks.remove(trademark)
-            continue
+        # if fuzz.partial_ratio(trademark.mark_identification, inputText) > 80:
+        #     pair = (trademark, "yellow")
+        #     infringementList.append(pair)
+        #     trademarks.remove(trademark)
+        #     continue
+        #
+        # if fuzz.token_sort_ratio(trademark.mark_identification, inputText) > 80:
+        #     pair = (trademark, "yellow")
+        #     infringementList.append(pair)
+        #     trademarks.remove(trademark)
+        #     continue
+        #
+        # if fuzz.token_set_ratio(trademark.mark_identification, inputText) > 75:
+        #     pair = (trademark, "green")
+        #     infringementList.append(pair)
+        #     trademarks.remove(trademark)
+        #     continue
 
 
 def get_similar_trademarks(trademarks: list, inputText: str, infringementList: list):
-    judge_exact_match(trademarks, inputText, infringementList)
-    judge_ratio_fuzzy(trademarks, inputText, infringementList)
-    judge_phonetic_similarity(trademarks, inputText, infringementList)
+    # judge_exact_match(trademarks, inputText, infringementList)
+    # judge_ratio_fuzzy(trademarks, inputText, infringementList)
+    # judge_phonetic_similarity(trademarks, inputText, infringementList)
+    for trademark in trademarks:
+        pair = (trademark, "yellow")
+        infringementList.append(pair)

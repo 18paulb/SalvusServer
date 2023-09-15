@@ -12,7 +12,7 @@ from salvusbackend.transformer import classify_code, get_label_decoder
 from trademarkSearch.datacleaning import download_and_process_files, get_training_data
 import os
 
-from trademarkSearch.models import make_trademark_objects
+from trademarkSearch.TrademarkModel import make_trademark_objects
 
 
 # Create your views here.
@@ -135,9 +135,10 @@ def getSearchHistory(request):
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
 
+
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
-#
+
 # td = TrademarkDao()
 #
 # trademarkObjects = []
