@@ -1,9 +1,8 @@
 import json
 import boto3
-from trademarkSearch.models import Trademark
+from trademarkSearch.TrademarkModel import Trademark
 from salvusbackend.logger import logger
 from boto3.dynamodb.conditions import Key, Attr
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
 
@@ -22,7 +21,7 @@ class TrademarkDao:
                 logger.info(f"Inserting batch {i} of {len(trademarks)} into database")
                 print(f"Inserting batch {i} of {len(trademarks)} into database")
                 try:
-                    if trademark.codes is None or len(trademark.codes) == 0:
+                    if trademark.descriptions_and_codes is None or len(trademark.descriptions_and_codes) == 0:
                         batch.put_item(
                             Item={
                                 "mark_identification": trademark.mark_identification,
@@ -31,12 +30,16 @@ class TrademarkDao:
                                 "date_filed": trademark.date_filed,
                                 "code": None,
                                 "activeStatus": trademark.activeStatus,
-                                "case_file_descriptions": trademark.case_file_descriptions
+                                "description": None,
+                                "disclaimers": trademark.disclaimers
                             }
                         )
 
-                    elif len(trademark.codes) > 1:
-                        for code in trademark.codes:
+                    elif len(trademark.descriptions_and_codes) >= 1:
+                        for desc_and_code in trademark.descriptions_and_codes:
+                            description = desc_and_code[0]
+                            code = desc_and_code[1]
+
                             batch.put_item(
                                 Item={
                                     "mark_identification": trademark.mark_identification,
@@ -45,7 +48,8 @@ class TrademarkDao:
                                     "date_filed": trademark.date_filed,
                                     "code": code,
                                     "activeStatus": trademark.activeStatus,
-                                    "case_file_descriptions": trademark.case_file_descriptions
+                                    "description": description,
+                                    "disclaimers": trademark.disclaimers
                                 }
                             )
                 except Exception as e:
@@ -71,12 +75,14 @@ class TrademarkDao:
         trademarks = []
 
         for trademark in items:
+            description_and_code = (trademark.get("description"), trademark.get("code"))
+
             trademarks.append(
                 Trademark(
                     trademark.get("mark_identification"),
                     trademark.get("serial_number"),
-                    trademark.get("code"),
-                    trademark.get("case_file_descriptions"),
+                    description_and_code,
+                    trademark.get("disclaimers"),
                     trademark.get("case_owners"),
                     trademark.get("date_filed"),
                     trademark.get("activeStatus")
@@ -102,12 +108,14 @@ class TrademarkDao:
         trademarks = []
 
         for trademark in items:
+            description_and_code = (trademark.get("description"), trademark.get("code"))
+
             trademarks.append(
                 Trademark(
                     trademark.get("mark_identification"),
                     trademark.get("serial_number"),
-                    trademark.get("code"),
-                    trademark.get("case_file_descriptions"),
+                    description_and_code,
+                    trademark.get("disclaimers"),
                     trademark.get("case_owners"),
                     trademark.get("date_filed"),
                     trademark.get("activeStatus")
