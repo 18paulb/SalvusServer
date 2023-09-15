@@ -20,18 +20,19 @@ class TrademarkDao:
             for trademark in trademarks:
                 logger.info(f"Inserting batch {i} of {len(trademarks)} into database")
                 print(f"Inserting batch {i} of {len(trademarks)} into database")
+
                 try:
                     if trademark.descriptions_and_codes is None or len(trademark.descriptions_and_codes) == 0:
                         batch.put_item(
                             Item={
-                                "mark_identification": trademark.mark_identification,
-                                "serial_number": trademark.serial_number,
-                                "case_owners": trademark.case_owners,
-                                "date_filed": trademark.date_filed,
+                                "mark_identification": trademark.mark_identification if trademark.mark_identification is not None else "",
+                                "serial_number": trademark.serial_number if trademark.serial_number is not None else "",
+                                "case_owners": trademark.case_owners if trademark.case_owners is not None else [],
+                                "date_filed": trademark.date_filed if trademark.date_filed is not None else "",
                                 "code": None,
-                                "activeStatus": trademark.activeStatus,
+                                "activeStatus": trademark.activeStatus if trademark.activeStatus is not None else "",
                                 "description": None,
-                                "disclaimers": trademark.disclaimers
+                                "disclaimers": trademark.disclaimers if trademark.activeStatus is not None else []
                             }
                         )
 
@@ -42,14 +43,14 @@ class TrademarkDao:
 
                             batch.put_item(
                                 Item={
-                                    "mark_identification": trademark.mark_identification,
-                                    "serial_number": trademark.serial_number,
-                                    "case_owners": trademark.case_owners,
-                                    "date_filed": trademark.date_filed,
-                                    "code": code,
-                                    "activeStatus": trademark.activeStatus,
-                                    "description": description,
-                                    "disclaimers": trademark.disclaimers
+                                    "mark_identification": trademark.mark_identification if trademark.mark_identification is not None else "",
+                                    "serial_number": trademark.serial_number if trademark.serial_number is not None else "",
+                                    "case_owners": trademark.case_owners if trademark.case_owners is not None else [],
+                                    "date_filed": trademark.date_filed if trademark.date_filed is not None else "",
+                                    "code": code if code is not None else "",
+                                    "activeStatus": trademark.activeStatus if trademark.activeStatus is not None else "",
+                                    "description": description if description is not None else "",
+                                    "disclaimers": trademark.disclaimers if trademark.activeStatus is not None else []
                                 }
                             )
                 except Exception as e:
