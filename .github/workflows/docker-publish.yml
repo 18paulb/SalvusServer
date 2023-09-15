@@ -52,11 +52,17 @@ jobs:
           # A comma-delimited list of AWS account IDs that are associated with the ECR Private registries. If you do not specify a registry, the default ECR Private registry is assumed. If 'public' is given as input to 'registry-type', this input is ignored.
 
 
-      - name: Debugging - List ECR repositories
-        run: aws ecr describe-repositories --region ${{ env.AWS_REGION }}
+
 
       - name: Set Image Tag Name
         run: echo "IMAGE_TAG=salvus-server-$(date +%Y.%m.%d).${{ github.run_number }}-$(echo ${{ github.sha }} | head -c7)" >> $GITHUB_ENV
+      
+      - name: Debugging - List ECR repositories
+        run: 
+          aws ecr describe-repositories --region ${{ env.AWS_REGION }}      
+          echo $ECR_REGISTRY
+          echo $ECR_REPOSITORY
+          echo $IMAGE_TAG
 
       - name: Build and push the tagged docker image to Amazon ECR
         env:
