@@ -51,7 +51,12 @@ jobs:
         with:
           mask-password: true
           # A comma-delimited list of AWS account IDs that are associated with the ECR Private registries. If you do not specify a registry, the default ECR Private registry is assumed. If 'public' is given as input to 'registry-type', this input is ignored.
-          
+
+
+      - name: Debugging - List ECR repositories
+        run: aws ecr describe-repositories --region ${{ env.AWS_REGION }}
+
+        
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
