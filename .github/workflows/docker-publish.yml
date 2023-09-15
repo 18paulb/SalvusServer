@@ -58,7 +58,7 @@ jobs:
         run: echo "IMAGE_TAG=salvus-server-$(date +%Y.%m.%d).${{ github.run_number }}-$(echo ${{ github.sha }} | head -c7)" >> $GITHUB_ENV
       
       - name: Debugging - List ECR repositories
-        run: 
+        run: |
           aws ecr describe-repositories --region ${{ env.AWS_REGION }}      
           echo $ECR_REGISTRY
           echo $ECR_REPOSITORY
