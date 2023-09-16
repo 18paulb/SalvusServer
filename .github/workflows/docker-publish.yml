@@ -84,6 +84,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: debug
+        run: echo $ECR_LOCATION
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3 # More information on this action can be found below in the 'AWS Credentials' section
