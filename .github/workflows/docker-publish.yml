@@ -71,7 +71,7 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "ECR_LOCATION=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
-          echo "::set-output name=ecr-location::$ECR_LOCATION"
+          echo "::set-output name=image-tag::$IMAGE_TAG"
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -80,13 +80,13 @@ jobs:
       id-token: write
 
     env:
-      ECR_LOCATION: ${{needs.build.outputs.ecr-location}}
+      IMAGE_TAG: ${{needs.build.outputs.image-tag}}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: debug
-        run: echo $ECR_LOCATION
+        run: echo $IMAGE_TAG
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3 # More information on this action can be found below in the 'AWS Credentials' section
@@ -99,7 +99,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: salvus-container
-          image: $ECR_LOCATION
+          image: $IMAGE_TAG
   
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
