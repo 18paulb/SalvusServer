@@ -72,7 +72,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: salvus-container
-          image: $IMAGE_TAG
+          image: $ECR_LOCATION
   
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
