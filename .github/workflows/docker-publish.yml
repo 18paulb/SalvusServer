@@ -28,7 +28,7 @@ jobs:
       id-token: write
 
     outputs:
-      ecr-location: 
+      image-tag: ${{ steps.build.outputs.image-tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -67,6 +67,7 @@ jobs:
           echo $IMAGE_TAG
 
       - name: Build and push the tagged docker image to Amazon ECR
+        id: build
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
