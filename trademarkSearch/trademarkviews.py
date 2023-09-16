@@ -14,7 +14,6 @@ import os
 
 from trademarkSearch.TrademarkModel import make_trademark_objects
 
-
 # Create your views here.
 
 def same_mark_search(request):
@@ -28,27 +27,29 @@ def same_mark_search(request):
 
         inputMark = request.GET.get('query')
         typeCode = request.GET.get('code')
-        activeStatus = request.GET.get('activeStatus')
-        lastEvaluatedKey = request.GET.get('lastEvaluatedKey')
 
         email = userInfo[0]
         companyName = userInfo[1]
 
-        # This list will contain a list of Tuple(trademarkObject, riskLevel)
-        infringementList = []
-
         td = TrademarkDao()
         sd = SearchDao()
 
-        marks, lastEvaluatedKey = td.search_by_code(typeCode, activeStatus, lastEvaluatedKey)
+        # Get all marks by that code (this will return part of the trademark so that it is faster to query)
+        marks = td.search_by_code(typeCode)
+
+        # Save search into database
         sd.insert_search(inputMark, email, companyName, typeCode)
 
-        ts.get_similar_trademarks(marks, inputMark, infringementList)
+        # Give each trademark a score based on closeness to input mark, return that sorted list of infringements
+        infringementList = ts.get_similar_trademarks(marks, inputMark)
+
+        # Now we need to retrieve the rest of the data for the trademarks, in order to make sure the response is as quick as possible
+        # Only get the data for some of the trademarks right now, and if the user requests
+        returnVals = td.test_get_trademarks_by_serial_number(infringementList)
 
         response_data = {
             'data': [{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
-                     for infringement in infringementList],
-            'lastEvaluatedKey': lastEvaluatedKey
+                     for infringement in returnVals],
         }
 
         return JsonResponse(response_data, safe=False, status=200)
@@ -134,7 +135,6 @@ def getSearchHistory(request):
     except Exception as e:
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
-
 
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
