@@ -61,10 +61,25 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
         #     continue
 
 
-def get_similar_trademarks(trademarks: list, inputText: str, infringementList: list):
-    # judge_exact_match(trademarks, inputText, infringementList)
-    # judge_ratio_fuzzy(trademarks, inputText, infringementList)
-    # judge_phonetic_similarity(trademarks, inputText, infringementList)
+def get_similar_trademarks(trademarks: list, inputText: str):
+    infringementDict = {}
+    # Right now we make an entire dictionary with key: trademark and value: the closeness rating
     for trademark in trademarks:
-        pair = (trademark, "yellow")
-        infringementList.append(pair)
+        infringementDict[trademark] = fuzz.ratio(trademark[2], inputText)
+
+    # Now we sort the dict so that the trademarks with the highest score are first
+    infringementDict = {k: v for k, v in sorted(infringementDict.items(), key=lambda item: item[1], reverse=True)}
+
+    returnList = []
+
+    # Do the difficulty score
+    for item in infringementDict.items():
+
+        if item[1] > 80:
+            returnList.append((item[0], "red"))
+        elif 60 < item[1] < 80:
+            returnList.append((item[0], "yellow"))
+        else:
+            returnList.append((item[0], "green"))
+
+    return returnList

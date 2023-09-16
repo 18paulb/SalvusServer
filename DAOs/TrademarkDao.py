@@ -6,11 +6,32 @@ from boto3.dynamodb.conditions import Key, Attr
 import threading
 
 
+def make_trademarks_from_table_results(items):
+    trademarks = []
+    for trademark in items:
+        description_and_code = (trademark.get("description"), trademark.get("code"))
+
+        trademarks.append(
+            Trademark(
+                trademark.get("mark_identification"),
+                trademark.get("serial_number"),
+                description_and_code,
+                trademark.get("disclaimers"),
+                trademark.get("case_owners"),
+                trademark.get("date_filed"),
+                trademark.get("activeStatus")
+            )
+        )
+
+    return trademarks
+
+
 class TrademarkDao:
 
     def __init__(self):
         self.dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-        self.table = self.dynamodb.Table('Trademark')
+        self.table_name = 'Trademark'
+        self.table = self.dynamodb.Table(self.table_name)
         self.counter = 0  # Shared counter
         self.lock = threading.Lock()  # Lock to make updating the counter thread-safe
 
@@ -58,40 +79,6 @@ class TrademarkDao:
                     continue
                 i += 1
 
-    def search_by_code(self, code: str, activeStatus: str, lastEvaluatedKey: any):
-        query_params = {
-            "IndexName": 'code-date_filed-index',
-            "KeyConditionExpression": boto3.dynamodb.conditions.Key('code').eq(code),
-            "FilterExpression": Attr('activeStatus').eq(activeStatus),
-            'ScanIndexForward': False,
-        }
-
-        if lastEvaluatedKey is not None:
-            query_params["ExclusiveStartKey"] = json.loads(lastEvaluatedKey)
-
-        response = self.table.query(**query_params)
-
-        items = response['Items']
-        lastKey = response.get('LastEvaluatedKey', None)
-        trademarks = []
-
-        for trademark in items:
-            description_and_code = (trademark.get("description"), trademark.get("code"))
-
-            trademarks.append(
-                Trademark(
-                    trademark.get("mark_identification"),
-                    trademark.get("serial_number"),
-                    description_and_code,
-                    trademark.get("disclaimers"),
-                    trademark.get("case_owners"),
-                    trademark.get("date_filed"),
-                    trademark.get("activeStatus")
-                )
-            )
-
-        return trademarks, lastKey
-
     # Consider having this return all the codes of a trademark and not just one
     def search_all(self, activeStatus: str, lastEvaluatedKey: any):
         # The exclusiveStartKey and the lastEvaluatedKey allows for pagination of search results of scan returns too much data
@@ -106,21 +93,90 @@ class TrademarkDao:
 
         items = response['Items']
         lastKey = response.get('LastEvaluatedKey', None)
-        trademarks = []
 
-        for trademark in items:
-            description_and_code = (trademark.get("description"), trademark.get("code"))
-
-            trademarks.append(
-                Trademark(
-                    trademark.get("mark_identification"),
-                    trademark.get("serial_number"),
-                    description_and_code,
-                    trademark.get("disclaimers"),
-                    trademark.get("case_owners"),
-                    trademark.get("date_filed"),
-                    trademark.get("activeStatus")
-                )
-            )
+        trademarks = make_trademarks_from_table_results(items)
 
         return [trademarks, lastKey]
+
+    """
+    What this method does is it will query using the fast-retrival-code-index, which basically returns fewer data from each object from the table
+    so that we can query faster and get more results from each read
+    """
+
+    def search_by_code(self, code: str):
+
+        query_params = {
+            "IndexName": 'fast-retrieval-code-index',
+            "KeyConditionExpression": boto3.dynamodb.conditions.Key('code').eq(code),
+        }
+
+        overallItems = []
+
+        i = 0
+        while True:
+
+            print("Number of table queries: ", i)
+            try:
+                response = self.table.query(**query_params)
+                overallItems.extend(response['Items'])  # Extend rather than append to flatten the list
+
+                lastKey = response.get('LastEvaluatedKey', None)
+
+                if lastKey is None:
+                    break
+
+                query_params["ExclusiveStartKey"] = lastKey
+                i += 1
+
+            except Exception as e:
+                logger.error(e)
+                break
+
+        trademarks = [(item['serial_number'], item['code'], item['mark_identification']) for item in overallItems]
+
+        return trademarks
+
+    """
+    This will need to get moved around to be cleaner code, however each item in serial_numbers_and_codes
+    will be a tuple of ((trademarkInfo), riskLevel set earlier)
+    """
+
+    def test_get_trademarks_by_serial_number(self, serial_numbers_and_codes: list):
+        # Grabs first thousand trademarks to return from the list of infringements
+
+        total_items = []
+
+        # FIXME: The thing with this is it doesn't preserve the order of most at risk
+        first_thousand = serial_numbers_and_codes[0:1000]
+        # This for loop will make sure we get 1000 results
+        for i in range(0, 10):
+            start_index = i * 100
+            end_index = start_index + 100
+            keys_to_fetch = [
+                {
+                    "serial_number": partition,
+                    "code": sort_key,
+                }
+                for ((partition, sort_key, _), _) in first_thousand[start_index:end_index]
+            ]
+
+            # Convert the keys into the format that DynamoDB expects
+            request_items = {
+                self.table_name: {
+                    'Keys': keys_to_fetch
+                }
+            }
+
+            # Use BatchGetItem to fetch the items
+            response = self.dynamodb.batch_get_item(RequestItems=request_items)
+            total_items.extend(response['Responses'][self.table_name])
+
+        trademarks = make_trademarks_from_table_results(total_items)
+
+        trademarks_with_ratings = []
+        for item in trademarks:
+            for trademark in first_thousand:
+                if item.serial_number == trademark[0][0]:
+                    trademarks_with_ratings.append((item, trademark[1]))
+
+        return trademarks_with_ratings
