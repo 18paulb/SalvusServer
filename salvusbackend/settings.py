@@ -61,6 +61,7 @@ CORS_ORIGIN_WHITELIST = (
 )
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
+    'https://salvusfrontend-d1a3e5e3ed38.herokuapp.com/'
 ]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:4200']
 CORS_ALLOW_CREDENTIALS = True

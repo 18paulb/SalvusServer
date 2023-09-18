@@ -25,5 +25,4 @@ urlpatterns = [
     path('trademark/', include('trademarkSearch.urls')),
     path('authentication/', include('authentication.urls')),
     path('searchHistory', trademarkviews.getSearchHistory, name='search_history'),
-    path('favicon.ico', trademarkviews.no_content_view)
 ]
