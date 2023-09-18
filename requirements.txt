@@ -44,5 +44,4 @@ rapidfuzz
 gunicorn
 whitenoise
 decouple
-sklearn
 python-dotenv
