@@ -25,6 +25,8 @@ python-decouple==3.8
 PyYAML==6.0.1
 regex==2023.6.3
 requests
+PyJWT
+python-decouple
 s3transfer==0.6.1
 scikit-learn
 scipy==1.11.1

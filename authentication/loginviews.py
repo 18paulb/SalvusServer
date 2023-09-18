@@ -1,6 +1,6 @@
 import datetime
 import json
-
+import jwt
 import bcrypt
 from boto3.dynamodb.types import Binary
 from django.http import JsonResponse
