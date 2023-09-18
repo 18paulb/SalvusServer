@@ -138,7 +138,6 @@ def getSearchHistory(request):
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
 
-
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
 #
