@@ -19,7 +19,6 @@ MarkupSafe==2.1.3
 Metaphone==0.6
 mpmath==1.3.0
 networkx==3.1
-numpy==1.25.1
 packaging==23.1
 phonetics
 PyJWT
@@ -33,7 +32,6 @@ safetensors==0.3.1
 scikit-learn
 scipy==1.11.1
 six==1.16.0
-sqlparse==0.4.4
 sympy==1.12
 threadpoolctl==3.2.0
 tokenizers==0.13.3
@@ -47,4 +45,4 @@ gunicorn
 whitenoise
 decouple
 sklearn
-dotenv
+python-dotenv
