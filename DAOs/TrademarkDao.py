@@ -30,7 +30,7 @@ class TrademarkDao:
 
     def __init__(self):
         self.dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-        self.table_name = 'Trademark'
+        self.table_name = 'Trademarks'
         self.table = self.dynamodb.Table(self.table_name)
         self.counter = 0  # Shared counter
         self.lock = threading.Lock()  # Lock to make updating the counter thread-safe
@@ -42,8 +42,13 @@ class TrademarkDao:
                 logger.info(f"Inserting batch {i} of {len(trademarks)} into database")
                 print(f"Inserting batch {i} of {len(trademarks)} into database")
 
+                # TODO: Every registration I have looked at in who has had date_filed = '' was not found in TESS so I am skipping the upload now. Make sure to go through USPTO dat again
+                # TODO: To make sure that we are not missing anything
+                if trademark.date_filed == '':
+                    continue
+
                 try:
-                    if trademark.descriptions_and_codes is None or len(trademark.descriptions_and_codes) == 0:
+                    if trademark.description_and_code is None or len(trademark.description_and_code) == 0:
                         batch.put_item(
                             Item={
                                 "mark_identification": trademark.mark_identification if trademark.mark_identification is not None else "",
@@ -57,8 +62,8 @@ class TrademarkDao:
                             }
                         )
 
-                    elif len(trademark.descriptions_and_codes) >= 1:
-                        for desc_and_code in trademark.descriptions_and_codes:
+                    elif len(trademark.description_and_code) >= 1:
+                        for desc_and_code in trademark.description_and_code:
                             description = desc_and_code[0]
                             code = desc_and_code[1]
 
@@ -106,7 +111,7 @@ class TrademarkDao:
     def search_by_code(self, code: str):
 
         query_params = {
-            "IndexName": 'fast-retrieval-code-index',
+            "IndexName": 'code-index',
             "KeyConditionExpression": boto3.dynamodb.conditions.Key('code').eq(code),
         }
 
@@ -146,7 +151,7 @@ class TrademarkDao:
 
         total_items = []
 
-        # FIXME: The thing with this is it doesn't preserve the order of most at risk
+        # Not returning any items with new elements
         first_thousand = serial_numbers_and_codes[0:1000]
         # This for loop will make sure we get 1000 results
         for i in range(0, 10):
@@ -163,7 +168,8 @@ class TrademarkDao:
             # Convert the keys into the format that DynamoDB expects
             request_items = {
                 self.table_name: {
-                    'Keys': keys_to_fetch
+                    'Keys': keys_to_fetch,
+                    'ProjectionExpression': "serial_number, code, activeStatus, case_owners, date_filed, description, disclaimers, mark_identification"
                 }
             }
 

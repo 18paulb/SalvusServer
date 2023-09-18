@@ -8,7 +8,7 @@ class Trademark:
                  case_owners=None, date_filed=None, activeStatus=None):
         self.mark_identification = mark_identification if mark_identification is not None else ""
         self.serial_number = serial_number if serial_number is not None else ""
-        self.descriptions_and_codes = descriptions_and_codes if descriptions_and_codes is not None else []
+        self.description_and_code = descriptions_and_codes if descriptions_and_codes is not None else []
         self.case_owners = case_owners if case_owners is not None else []
         self.date_filed = date_filed if date_filed is not None else ""
         self.activeStatus = activeStatus if activeStatus is not None else ""
@@ -17,7 +17,7 @@ class Trademark:
     def __str__(self):
         return "Case Owners: " + "\n".join(
             self.case_owners) + "\nDate Filed: " + self.date_filed + "\nactiveStatus: " + self.activeStatus + "\nSerial Number: " + self.serial_number + "\nMark Identification: " + self.mark_identification + "\nDescriptions And Codes: " + " ".join(
-            self.descriptions_and_codes)
+            self.description_and_code)
 
     def to_dict(self):
         # Get rid of duplicates in lists (includes case sensitivity)
@@ -27,7 +27,7 @@ class Trademark:
         return {
             'mark_identification': self.mark_identification,
             'serial_number': self.serial_number,
-            'descriptions_and_codes': self.descriptions_and_codes,
+            'description_and_code': self.description_and_code,
             'case_owners': case_owners,
             'date_filed': self.date_filed,
             'activeStatus': self.activeStatus
@@ -84,7 +84,7 @@ def make_trademark_objects(filename):
                 # Appends a Tuple, the description and the code that matches the description
                 if typecode[0:2] == "GS":
                     code_that_matches_description = typecode[2:5]
-                    trademark.descriptions_and_codes.append((description, code_that_matches_description))
+                    trademark.description_and_code.append((description, code_that_matches_description))
 
                 if typecode[0:2] == "D1":
                     trademark.disclaimers.append(description)
