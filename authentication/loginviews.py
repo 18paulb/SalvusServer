@@ -5,10 +5,11 @@ import bcrypt
 from boto3.dynamodb.types import Binary
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from decouple import config
 from salvusbackend.logger import logger
 from DAOs.AuthtokenDao import AuthtokenDao
 from DAOs.UserDao import UserDao
+from dotenv import load_dotenv
+import os
 
 
 # TODO: Do not have csrf_exempt in production
@@ -58,7 +59,8 @@ def verify_password(hashed_password, provided_password):
 
 
 def generate_authtoken():
-    SECRET_KEY = config('AUTHTOKEN_SECRET_KEY')
+    load_dotenv()
+    SECRET_KEY = os.environ.get('AUTHTOKEN_SECRET_KEY')
     # Create a JWT token with an expiration time of 24 hour
     payload = {"sub": "user", "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)}
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
