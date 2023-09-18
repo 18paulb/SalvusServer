@@ -17,23 +17,27 @@ def download_and_process_files():
     # url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-10.zip"
     # base_url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-"
     urls = [
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-41.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-42.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-43.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-44.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-45.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-46.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-47.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-48.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-49.zip',
-        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-50.zip',
 
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-31.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-32.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-33.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-34.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-35.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-36.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-37.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-38.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-39.zip',
+        'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-40.zip',
 
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-24.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-33.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-38.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-37.zip',
-        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-47.zip',
+        # Do these again later because something weird happened
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-71.zip',
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-72.zip',
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-73.zip',
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-74.zip',
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-75.zip',
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-76.zip',
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-77.zip',
+        # 'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-78.zip',
     ]
 
     # Since downloading is I/O multi-threading works perfectly for this
