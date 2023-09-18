@@ -14,6 +14,7 @@ import os
 
 from trademarkSearch.TrademarkModel import make_trademark_objects
 
+
 # Create your views here.
 
 def same_mark_search(request):
@@ -41,7 +42,7 @@ def same_mark_search(request):
         sd.insert_search(inputMark, email, companyName, typeCode)
 
         # Give each trademark a score based on closeness to input mark, return that sorted list of infringements
-        infringementList = ts.get_similar_trademarks(marks, inputMark)
+        infringementList = ts.score_similar_trademarks(marks, inputMark)
 
         # Now we need to retrieve the rest of the data for the trademarks, in order to make sure the response is as quick as possible
         # Only get the data for some of the trademarks right now, and if the user requests
@@ -83,7 +84,7 @@ def all_mark_search(request):
         marks, lastEvaluatedKey = td.search_all(activeStatus, lastEvaluatedKey)
         sd.insert_search(inputMark, email, companyName, None)
 
-        ts.get_similar_trademarks(marks, inputMark, infringementList)
+        ts.score_similar_trademarks(marks, inputMark, infringementList)
 
         response_data = {
             'data': [{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
@@ -136,9 +137,10 @@ def getSearchHistory(request):
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
 
+
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
-
+#
 # td = TrademarkDao()
 #
 # trademarkObjects = []
@@ -148,7 +150,6 @@ def getSearchHistory(request):
 #
 # print("Inserting ", len(trademarkObjects), " into database")
 # td.insert_batch(trademarkObjects)
-# # td.multi_thread_insert(trademarkObjects)
 # print("Inserted around:", len(trademarkObjects), " items")
 
 # This code gets the training data from the xml files and puts it into a json file
