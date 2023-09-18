@@ -25,5 +25,5 @@ urlpatterns = [
     path('trademark/', include('trademarkSearch.urls')),
     path('authentication/', include('authentication.urls')),
     path('searchHistory', trademarkviews.getSearchHistory, name='search_history'),
-    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('/static/images/favicon.ico')))
+    path('favicon.ico', trademarkviews.no_content_view)
 ]

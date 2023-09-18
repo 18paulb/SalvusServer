@@ -138,6 +138,10 @@ def getSearchHistory(request):
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
 
+
+def no_content_view(request):
+    return HttpResponse(status=204)
+
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
 #
