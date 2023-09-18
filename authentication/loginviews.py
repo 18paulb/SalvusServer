@@ -44,7 +44,7 @@ def login(request):
             return JsonResponse({"message": "Incorrect Password"}, status=401)
 
     except Exception as e:
-        logger.error(e)
+        logger.error("Error in login: ", e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
 
 
