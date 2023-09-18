@@ -1,1 +1,1 @@
-web: gunicorn salvusbackend -log-file -
+web: gunicorn salvusbackend.wsgi
