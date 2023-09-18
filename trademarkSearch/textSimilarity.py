@@ -61,10 +61,15 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
         #     continue
 
 
-def get_similar_trademarks(trademarks: list, inputText: str):
+def score_similar_trademarks(trademarks: list, inputText: str):
     infringementDict = {}
     # Right now we make an entire dictionary with key: trademark and value: the closeness rating
     for trademark in trademarks:
+
+        if inputText in trademark[2]:
+            infringementDict[trademark] = 90
+            continue
+
         infringementDict[trademark] = fuzz.ratio(trademark[2], inputText)
 
     # Now we sort the dict so that the trademarks with the highest score are first
