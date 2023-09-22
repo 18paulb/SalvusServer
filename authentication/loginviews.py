@@ -3,7 +3,7 @@ import json
 import jwt
 import bcrypt
 from boto3.dynamodb.types import Binary
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from salvusbackend.logger import logger
 from DAOs.AuthtokenDao import AuthtokenDao
@@ -41,11 +41,11 @@ def login(request):
             return JsonResponse({"message": "Successfully Logged In", "authtoken": authtoken, "expDate": expDate},
                                 status=200)
         else:
-            return JsonResponse({"message": "Incorrect Password"}, status=401)
+            return HttpResponse("Incorrect Login", status=401)
 
     except Exception as e:
         logger.error("Error in login: ", e)
-        return JsonResponse({"message": "An error has occurred"}, status=500)
+        return HttpResponse("An error as occured", status=500)
 
 
 def verify_password(hashed_password, provided_password):
