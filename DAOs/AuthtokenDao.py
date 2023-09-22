@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+import datetime
 import logging
 import boto3
 from salvusbackend.logger import logger
@@ -45,27 +45,45 @@ class AuthtokenDao:
             logger.error(e)
             print(e)
 
-    def compare_token_to_database(self, email, authtoken):
+    # def compare_token_to_database(self, email, authtoken):
+    #     try:
+    #         response = self.table.query(
+    #             ProjectionExpression='email, authtoken, expDate',
+    #             KeyConditionExpression=boto3.dynamodb.conditions.Key('email').eq(email)
+    #         )
+    #
+    #         # Makes sure authtoken matches and is not expired
+    #         datestr = datetime.strptime(response['Items'][0]['expDate'], "%Y-%m-%dT%H:%M:%S.%f")
+    #         return (response['Items'][0]['authtoken'] == authtoken and
+    #                 datestr > datetime.utcnow())
+    #
+    #     except Exception as e:
+    #         logger.error(e)
+    #         print(e)
+
+    # def verify_authtoken(self, email, authtoken):
+    #     try:
+    #         # Finds the hashed password in the database
+    #         return self.compare_token_to_database(email, authtoken)
+    #
+    #     except Exception as e:
+    #         logger.error(e)
+    #         return False
+
+    def verify_authtoken(self, authtoken):
         try:
             response = self.table.query(
-                ProjectionExpression='email, authtoken, expDate',
-                KeyConditionExpression=boto3.dynamodb.conditions.Key('email').eq(email)
+                IndexName='authtoken-index',  # Name of the Global Secondary Index
+                KeyConditionExpression=boto3.dynamodb.conditions.Key('authtoken').eq(authtoken),
             )
 
             # Makes sure authtoken matches and is not expired
-            datestr = datetime.strptime(response['Items'][0]['expDate'], "%Y-%m-%dT%H:%M:%S.%f")
-            return (response['Items'][0]['authtoken'] == authtoken and
-                    datestr > datetime.utcnow())
+            datestr = response['Items'][0]['expDate']
+            # Parse the datetime string from JSON.
+            exp_date = datetime.datetime.fromisoformat(datestr)
+
+            return exp_date > datetime.datetime.utcnow()
 
         except Exception as e:
-            logger.error(e)
-            print(e)
-
-    def verify_authtoken(self, email, authtoken):
-        try:
-            # Finds the hashed password in the database
-            return self.compare_token_to_database(email, authtoken)
-
-        except Exception as e:
-            logger.error(e)
-            return False
+            logger.error(e.__str__() + "\nInvalid authtoken given")
+            print(e.__str__() + "\nInvalid authtoken given")
