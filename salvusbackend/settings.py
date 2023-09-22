@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-p$oh#f(p&jpz=p5g4^i4q!zu*r6h4a8@u7un%q8!b2c8fm^e1q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', 'https://salvusfrontend-d1a3e5e3ed38.herokuapp.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,11 +53,13 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:4200',
+    'https://salvusfrontend-d1a3e5e3ed38.herokuapp.com'
 )
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
+    'https://salvusfrontend-d1a3e5e3ed38.herokuapp.com'
 ]
-CSRF_TRUSTED_ORIGINS = ['http://localhost:4200']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4200', 'https://salvusfrontend-d1a3e5e3ed38.herokuapp.com']
 CORS_ALLOW_CREDENTIALS = True
 
 
