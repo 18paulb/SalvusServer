@@ -1,83 +1,83 @@
-name: Build and Publish Salvus Backend
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-on:
-  push:
-    branches: [ "main" ]
-    # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
-
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-
-
-jobs:
-  build:
-
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3 # More information on this action can be found below in the 'AWS Credentials' section
-        with:
-          role-to-assume: arn:aws:iam::625565640444:role/github-actions-iam-Role-PdBdjCCVYkVN
-          aws-region: us-west-2
-          
-      # Set up BuildKit Docker container builder to be able to build
-      # multi-platform images and export cache
-      # https://github.com/docker/setup-buildx-action
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
-
-      - name: Log into ECR
-        if: github.event_name != 'pull_request'
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          mask-password: true
-          # A comma-delimited list of AWS account IDs that are associated with the ECR Private registries. If you do not specify a registry, the default ECR Private registry is assumed. If 'public' is given as input to 'registry-type', this input is ignored.
-
-      - name: Set Image Tag Name
-        run: echo "IMAGE_TAG=salvus-server-$(date +%Y.%m.%d).${{ github.run_number }}-$(echo ${{ github.sha }} | head -c7)" >> $GITHUB_ENV
-      
-      - name: Debugging - List ECR repositories
-        run: |
-          aws ecr describe-repositories --region ${{ env.AWS_REGION }}      
-          echo $ECR_REGISTRY
-          echo $ECR_REPOSITORY
-          echo $IMAGE_TAG
-
-      - name: Build and push the tagged docker image to Amazon ECR
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "ECR_LOCATION=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
-          
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: salvus-container
-          image: $ECR_LOCATION
-  
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: salvus-service
-          cluster: SalvusServer
-          wait-for-service-stability: true
+#name: Build and Publish Salvus Backend
+#
+## This workflow uses actions that are not certified by GitHub.
+## They are provided by a third-party and are governed by
+## separate terms of service, privacy policy, and support
+## documentation.
+#
+#on:
+#  push:
+#    branches: [ "main" ]
+#    # Publish semver tags as releases.
+#    tags: [ 'v*.*.*' ]
+#  pull_request:
+#    branches: [ "main" ]
+#
+#env:
+#  AWS_REGION: ${{ secrets.AWS_REGION }}
+#  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+#  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+#
+#
+#jobs:
+#  build:
+#
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: read
+#      id-token: write
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v3 # More information on this action can be found below in the 'AWS Credentials' section
+#        with:
+#          role-to-assume: arn:aws:iam::625565640444:role/github-actions-iam-Role-PdBdjCCVYkVN
+#          aws-region: us-west-2
+#
+#      # Set up BuildKit Docker container builder to be able to build
+#      # multi-platform images and export cache
+#      # https://github.com/docker/setup-buildx-action
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+#
+#      - name: Log into ECR
+#        if: github.event_name != 'pull_request'
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#        with:
+#          mask-password: true
+#          # A comma-delimited list of AWS account IDs that are associated with the ECR Private registries. If you do not specify a registry, the default ECR Private registry is assumed. If 'public' is given as input to 'registry-type', this input is ignored.
+#
+#      - name: Set Image Tag Name
+#        run: echo "IMAGE_TAG=salvus-server-$(date +%Y.%m.%d).${{ github.run_number }}-$(echo ${{ github.sha }} | head -c7)" >> $GITHUB_ENV
+#
+#      - name: Debugging - List ECR repositories
+#        run: |
+#          aws ecr describe-repositories --region ${{ env.AWS_REGION }}
+#          echo $ECR_REGISTRY
+#          echo $ECR_REPOSITORY
+#          echo $IMAGE_TAG
+#
+#      - name: Build and push the tagged docker image to Amazon ECR
+#        run: |
+#          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          echo "ECR_LOCATION=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+#
+#      - name: Fill in the new image ID in the Amazon ECS task definition
+#        id: task-def
+#        uses: aws-actions/amazon-ecs-render-task-definition@v1
+#        with:
+#          task-definition: task-definition.json
+#          container-name: salvus-container
+#          image: $ECR_LOCATION
+#
+#      - name: Deploy Amazon ECS task definition
+#        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#        with:
+#          task-definition: ${{ steps.task-def.outputs.task-definition }}
+#          service: salvus-service
+#          cluster: SalvusServer
+#          wait-for-service-stability: true

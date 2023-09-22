@@ -22,9 +22,12 @@ def same_mark_search(request):
 
         authtokenDao = AuthtokenDao()
 
-        userInfo = authtokenDao.find_user_info_by_authtoken(request.headers.get('Authorization'))
-        if not authtokenDao.verify_authtoken(userInfo[0], request.headers.get('Authorization')):
+        if not authtokenDao.verify_authtoken(request.headers.get('Authorization')):
             return HttpResponse("Unauthorized", status=401)
+
+        userInfo = authtokenDao.find_user_info_by_authtoken(request.headers.get('Authorization'))
+        # if (userInfo is None) or (not authtokenDao.verify_authtoken(userInfo[0], request.headers.get('Authorization'))):
+        #     return HttpResponse("Unauthorized", status=401)
 
         inputMark = request.GET.get('query')
         typeCode = request.GET.get('code')
@@ -61,42 +64,43 @@ def same_mark_search(request):
 
 
 def all_mark_search(request):
-    try:
-        authtokenDao = AuthtokenDao()
-
-        userInfo = authtokenDao.find_user_info_by_authtoken(request.headers.get('Authorization'))
-        if not authtokenDao.verify_authtoken(userInfo[0], request.headers.get('Authorization')):
-            return HttpResponse("Unauthorized", status=401)
-
-        inputMark = request.GET.get('query')
-        activeStatus = request.GET.get('activeStatus')
-        lastEvaluatedKey = request.GET.get('lastEvaluatedKey')
-
-        email = userInfo[0]
-        companyName = userInfo[1]
-
-        # This list will contain a list of Tuple(trademarkObject, riskLevel)
-        infringementList = []
-
-        td = TrademarkDao()
-        sd = SearchDao()
-
-        marks, lastEvaluatedKey = td.search_all(activeStatus, lastEvaluatedKey)
-        sd.insert_search(inputMark, email, companyName, None)
-
-        ts.score_similar_trademarks(marks, inputMark, infringementList)
-
-        response_data = {
-            'data': [{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
-                     for infringement in infringementList],
-            'lastEvaluatedKey': lastEvaluatedKey
-        }
-
-        return JsonResponse(response_data, safe=False, status=200)
-
-    except Exception as e:
-        logger.error(e)
-        return HttpResponse("An error has occurred", status=500)
+    pass
+    # try:
+    #     authtokenDao = AuthtokenDao()
+    #
+    #     userInfo = authtokenDao.find_user_info_by_authtoken(request.headers.get('Authorization'))
+    #     if not authtokenDao.verify_authtoken(userInfo[0], request.headers.get('Authorization')):
+    #         return HttpResponse("Unauthorized", status=401)
+    #
+    #     inputMark = request.GET.get('query')
+    #     activeStatus = request.GET.get('activeStatus')
+    #     lastEvaluatedKey = request.GET.get('lastEvaluatedKey')
+    #
+    #     email = userInfo[0]
+    #     companyName = userInfo[1]
+    #
+    #     # This list will contain a list of Tuple(trademarkObject, riskLevel)
+    #     infringementList = []
+    #
+    #     td = TrademarkDao()
+    #     sd = SearchDao()
+    #
+    #     marks, lastEvaluatedKey = td.search_all(activeStatus, lastEvaluatedKey)
+    #     sd.insert_search(inputMark, email, companyName, None)
+    #
+    #     ts.score_similar_trademarks(marks, inputMark, infringementList)
+    #
+    #     response_data = {
+    #         'data': [{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}
+    #                  for infringement in infringementList],
+    #         'lastEvaluatedKey': lastEvaluatedKey
+    #     }
+    #
+    #     return JsonResponse(response_data, safe=False, status=200)
+    #
+    # except Exception as e:
+    #     logger.error(e)
+    #     return HttpResponse("An error has occurred", status=500)
 
 
 def classifyCode(request):

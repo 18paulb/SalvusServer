@@ -66,3 +66,15 @@ def generate_authtoken():
     token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token, payload["exp"]
 
+
+def authenticate(request):
+    try:
+        authtokenDao = AuthtokenDao()
+        if authtokenDao.verify_authtoken(request.headers.get('Authorization')):
+            return JsonResponse({'isAuthenticated': True}, status=200)
+        else:
+            return JsonResponse({'isAuthenticated': False}, status=401)
+
+    except Exception as e:
+        logger.error("Error in authenticate: ", e)
+        return JsonResponse({"message": "An error has occurred while authenticating authtoken"}, status=500)
