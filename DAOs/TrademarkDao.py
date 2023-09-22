@@ -146,7 +146,7 @@ class TrademarkDao:
     will be a tuple of ((trademarkInfo), riskLevel set earlier)
     """
 
-    def test_get_trademarks_by_serial_number(self, serial_numbers_and_codes: list):
+    def get_trademarks_by_serial_number(self, serial_numbers_and_codes: list):
         # Grabs first thousand trademarks to return from the list of infringements
 
         total_items = []
