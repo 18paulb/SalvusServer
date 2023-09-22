@@ -66,7 +66,7 @@ def score_similar_trademarks(trademarks: list, inputText: str):
     # Right now we make an entire dictionary with key: trademark and value: the closeness rating
     for trademark in trademarks:
 
-        if inputText in trademark[2]:
+        if inputText.lower() in trademark[2].lower():
             infringementDict[trademark] = 90
             continue
 
