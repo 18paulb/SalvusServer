@@ -8,7 +8,7 @@ from DAOs.UserDao import UserDao
 from DAOs.AuthtokenDao import AuthtokenDao
 import trademarkSearch.textSimilarity as ts
 from salvusbackend.logger import logger
-from salvusbackend.transformer import classify_code, get_label_decoder
+# from salvusbackend.transformer import classify_code, get_label_decoder
 from trademarkSearch.datacleaning import download_and_process_files, get_training_data
 import os
 
@@ -104,25 +104,26 @@ def all_mark_search(request):
 
 
 def classifyCode(request):
-    try:
-        code = classify_code(request.GET.get('query'), get_label_decoder())
-
-        # Read in JSON file and compare the code to get the corresponding classifying string
-        with open("salvusbackend/info/codes.json", "r") as f:
-            # Load JSON data from the file
-            codes_dict = json.load(f)
-
-            # Iterate over the "Goods" and "Services" keys in the codes_dict dictionary
-            for category in codes_dict["codes"]:
-                # Iterate over the key-value pairs in each category
-                for key, value in codes_dict["codes"][category].items():
-                    # Add the key-value pair to the flattened dictionary
-                    codes_dict[value] = key  # Note that we switched the key and value
-
-        return JsonResponse({"classification": codes_dict[code[0]]}, status=200)
-    except Exception as e:
-        logger.error(e)
-        return JsonResponse({"message": "An error has occurred"}, status=500)
+    pass
+    # try:
+    #     code = classify_code(request.GET.get('query'), get_label_decoder())
+    #
+    #     # Read in JSON file and compare the code to get the corresponding classifying string
+    #     with open("salvusbackend/info/codes.json", "r") as f:
+    #         # Load JSON data from the file
+    #         codes_dict = json.load(f)
+    #
+    #         # Iterate over the "Goods" and "Services" keys in the codes_dict dictionary
+    #         for category in codes_dict["codes"]:
+    #             # Iterate over the key-value pairs in each category
+    #             for key, value in codes_dict["codes"][category].items():
+    #                 # Add the key-value pair to the flattened dictionary
+    #                 codes_dict[value] = key  # Note that we switched the key and value
+    #
+    #     return JsonResponse({"classification": codes_dict[code[0]]}, status=200)
+    # except Exception as e:
+    #     logger.error(e)
+    #     return JsonResponse({"message": "An error has occurred"}, status=500)
 
 
 def getSearchHistory(request):
