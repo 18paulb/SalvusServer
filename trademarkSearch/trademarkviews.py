@@ -49,7 +49,7 @@ def same_mark_search(request):
 
         # Now we need to retrieve the rest of the data for the trademarks, in order to make sure the response is as quick as possible
         # Only get the data for some of the trademarks right now, and if the user requests
-        returnVals = td.test_get_trademarks_by_serial_number(infringementList)
+        returnVals = td.get_trademarks_by_serial_number(infringementList)
 
         response_data = {
             'data': [{'trademark': infringement[0].to_dict(), 'riskLevel': infringement[1]}

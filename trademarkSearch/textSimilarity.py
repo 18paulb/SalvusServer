@@ -64,27 +64,41 @@ def judge_ratio_fuzzy(trademarks: list, inputText: str, infringementList: list):
 def score_similar_trademarks(trademarks: list, inputText: str):
     infringementDict = {}
     # Right now we make an entire dictionary with key: trademark and value: the closeness rating
+    # We get an overall closeness rating by summing the return values of all the fuzz operations
+    min_value = 1000
+    max_value = 0
+
     for trademark in trademarks:
+        infringementDict[trademark] = 0
 
         if inputText.lower() in trademark[2].lower():
-            infringementDict[trademark] = 90
-            continue
+            infringementDict[trademark] += 100
 
-        infringementDict[trademark] = fuzz.ratio(trademark[2], inputText)
+        infringementDict[trademark] += fuzz.ratio(trademark[2].lower(), inputText.lower())
+        infringementDict[trademark] += fuzz.partial_ratio(trademark[2].lower(), inputText.lower())
+        infringementDict[trademark] += fuzz.token_sort_ratio(trademark[2].lower(), inputText.lower())
+        infringementDict[trademark] += fuzz.token_set_ratio(trademark[2].lower(), inputText.lower())
+
+        if infringementDict[trademark] > max_value:
+            max_value = infringementDict[trademark]
+        if infringementDict[trademark] < min_value:
+            min_value = infringementDict[trademark]
+
+    # After all that, normalize each value to be on a scale of 0 to 100
+    for key in infringementDict.keys():
+        infringementDict[key] = min_max_scale(infringementDict[key], min_value, max_value)
 
     # Now we sort the dict so that the trademarks with the highest score are first
-    infringementDict = {k: v for k, v in sorted(infringementDict.items(), key=lambda item: item[1], reverse=True)}
+    infringementDict = {k: v for k, v in sorted(infringementDict.items(), key=lambda tmpItem: tmpItem[1], reverse=True)}
 
     returnList = []
 
-    # Do the difficulty score
     for item in infringementDict.items():
-
-        if item[1] > 80:
-            returnList.append((item[0], "red"))
-        elif 60 < item[1] < 80:
-            returnList.append((item[0], "yellow"))
-        else:
-            returnList.append((item[0], "green"))
+        returnList.append((item[0], item[1]))
 
     return returnList
+
+
+# This is code to standardize all the ratings to be between 0 and 100
+def min_max_scale(value, min_value, max_value):
+    return 1 + (value - min_value) * 99 / (max_value - min_value)
