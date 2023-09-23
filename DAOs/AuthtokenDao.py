@@ -45,31 +45,6 @@ class AuthtokenDao:
             logger.error(e)
             print(e)
 
-    # def compare_token_to_database(self, email, authtoken):
-    #     try:
-    #         response = self.table.query(
-    #             ProjectionExpression='email, authtoken, expDate',
-    #             KeyConditionExpression=boto3.dynamodb.conditions.Key('email').eq(email)
-    #         )
-    #
-    #         # Makes sure authtoken matches and is not expired
-    #         datestr = datetime.strptime(response['Items'][0]['expDate'], "%Y-%m-%dT%H:%M:%S.%f")
-    #         return (response['Items'][0]['authtoken'] == authtoken and
-    #                 datestr > datetime.utcnow())
-    #
-    #     except Exception as e:
-    #         logger.error(e)
-    #         print(e)
-
-    # def verify_authtoken(self, email, authtoken):
-    #     try:
-    #         # Finds the hashed password in the database
-    #         return self.compare_token_to_database(email, authtoken)
-    #
-    #     except Exception as e:
-    #         logger.error(e)
-    #         return False
-
     def verify_authtoken(self, authtoken):
         try:
             response = self.table.query(
