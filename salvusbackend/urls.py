@@ -15,14 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from trademarkSearch import trademarkviews
+from apps.trademarkSearch import trademarkviews
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.generic.base import RedirectView
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('trademark/', include('trademarkSearch.urls')),
-    path('authentication/', include('authentication.urls')),
+    path('trademark/', include('apps.trademarkSearch.urls')),
+    path('authentication/', include('apps.authentication.urls')),
     path('searchHistory', trademarkviews.getSearchHistory, name='search_history'),
 ]

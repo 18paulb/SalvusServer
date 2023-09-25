@@ -17,49 +17,6 @@ https://www.uspto.gov/sites/default/files/products/applications-documentation.pd
 Trademark Registered Images
 https://developer.uspto.gov/product/trademark-24-hour-box-and-supplemental
 
-If we want to use it on Trademark infringement. We may have to get Data of trademark infringement cases and label them
-
-- But could we get enough data for it to be viable?
-- That's a lot of data we would need to hand process
-
-Ex for this (Pretty sure this falls under a Supervised Learning NLP Model)
-Let's say I have an array of word marks
-text = ["Text1", "Text2", ...]
-
-I would need an array of labels that accurately describes the text, an example would be a binary label with 0 being an
-infringement and 1 being fine
-(Although I don't understand how that would work, would the entire model just predict similarity to one wordmark?)
-
-    labels = [0, 1, ...]
-
-How To Make Word Mark Searches Efficient
-
-* Obviously we will have a LOT of data and it isn't efficient to compare text against every possible word mark
-* We need to really figure out how to shrink the data we are comparing against
-
-A couple ideas:
-
-1. Separate each mark-identification we have into a JSON file (or separate JSON files because of so much data) that
-   falls under codes
-   that way when we have to do a search, we only need to look for the marks that fall under the same or similar codes
-
-   SIDE NOTE: We can train a model to classify a code for any text from the user side since we have so much data on what
-   falls under what code, that will save the user some work.
-   We would just use the labeling example from above
-    * Well it COULD save the user some work, it depends on the text they are putting in. Is asking the User to put in a
-      description any easier than having them manually choose a code?
-
-Judging Word Mark Similiarity
-
-1. Exact Matches Obviously
-
-- Though for this how do we separate and compare phrases?
-
-2. More Rough Matches (Fuzzy Search Algorithms?)
-3. Cosine Values, Comparing Semantics Using BERT (Needs more research to see if reliable or not)
-4. Not looking at the word mark itself but rather the people who uses it as that could be an infringement if they are (
-   not sure how this would work)
-
 Models Needed:
 
 1. Model to judge text similarity

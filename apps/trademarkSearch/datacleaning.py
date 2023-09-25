@@ -14,8 +14,6 @@ from lxml import etree
 # The downloaded files sometimes don't appear in file structure until the program ends, wait for FILE DOWNLOADS FINISHED
 # This function does all the downloading, unzipping, and cleaning of the files
 def download_and_process_files():
-    # url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-10.zip"
-    # base_url = "https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-"
     urls = [
 
         'https://bulkdata.uspto.gov/data/trademark/dailyxml/applications/apc18840407-20221231-71.zip',

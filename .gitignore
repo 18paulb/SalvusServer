@@ -6,4 +6,4 @@ file.log
 .env
 .DS_Store
 model_training_data.json
-trademarkSearch/result
+apps/trademarkSearch/result

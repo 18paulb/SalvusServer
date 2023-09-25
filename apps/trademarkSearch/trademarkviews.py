@@ -6,13 +6,13 @@ from DAOs.SearchDao import SearchDao
 from DAOs.TrademarkDao import TrademarkDao
 from DAOs.UserDao import UserDao
 from DAOs.AuthtokenDao import AuthtokenDao
-import trademarkSearch.textSimilarity as ts
+import apps.trademarkSearch.textSimilarity as ts
 from salvusbackend.logger import logger
 # from salvusbackend.transformer import classify_code, get_label_decoder
-from trademarkSearch.datacleaning import download_and_process_files, get_training_data
+from apps.trademarkSearch.datacleaning import download_and_process_files, get_training_data
 import os
 
-from trademarkSearch.TrademarkModel import make_trademark_objects
+from apps.trademarkSearch.TrademarkModel import make_trademark_objects
 
 
 # Create your views here.
@@ -141,7 +141,6 @@ def getSearchHistory(request):
     except Exception as e:
         logger.error(e)
         return JsonResponse({"message": "An error has occurred"}, status=500)
-
 
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed
 # download_and_process_files()
