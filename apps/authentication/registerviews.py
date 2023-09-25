@@ -1,8 +1,8 @@
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 import json
 from salvusbackend.logger import logger
-from authentication.loginviews import generate_authtoken
+from apps.authentication.loginviews import generate_authtoken
 from DAOs.UserDao import UserDao
 from DAOs.AuthtokenDao import AuthtokenDao
 

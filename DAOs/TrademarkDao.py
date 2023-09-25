@@ -1,6 +1,6 @@
 import json
 import boto3
-from trademarkSearch.TrademarkModel import Trademark
+from apps.trademarkSearch.TrademarkModel import Trademark
 from salvusbackend.logger import logger
 from boto3.dynamodb.conditions import Key, Attr
 import threading
