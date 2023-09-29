@@ -4,6 +4,7 @@ from apps.trademarkSearch.TrademarkModel import Trademark
 from salvusbackend.logger import logger
 from boto3.dynamodb.conditions import Key, Attr
 import threading
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
 
 def make_trademarks_from_table_results(items):
@@ -85,23 +86,13 @@ class TrademarkDao:
                 i += 1
 
     # Consider having this return all the codes of a trademark and not just one
-    def search_all(self, activeStatus: str, lastEvaluatedKey: any):
+    def search_all(self, activeStatus: str):
         # The exclusiveStartKey and the lastEvaluatedKey allows for pagination of search results of scan returns too much data
         query_params = {
             "FilterExpression": Attr('activeStatus').eq(activeStatus),
         }
 
-        if lastEvaluatedKey is not None:
-            query_params["ExclusiveStartKey"] = json.loads(lastEvaluatedKey)
-
-        response = self.table.scan(**query_params)
-
-        items = response['Items']
-        lastKey = response.get('LastEvaluatedKey', None)
-
-        trademarks = make_trademarks_from_table_results(items)
-
-        return [trademarks, lastKey]
+        return self.query_dynamodb(query_params)
 
     """
     What this method does is it will query using the fast-retrival-code-index, which basically returns fewer data from each object from the table
@@ -110,19 +101,53 @@ class TrademarkDao:
 
     def search_by_code(self, code: str):
 
-        query_params = {
-            "IndexName": 'code-index',
-            "KeyConditionExpression": boto3.dynamodb.conditions.Key('code').eq(code),
-        }
+        # We are going to use multithreading to make this faster
+        queries = [
+            # Gets all trademarks before 2000
+            {
+                "IndexName": 'fast-code-date_filed-index',
+                "KeyConditionExpression": Key('code').eq(code) & Key('date_filed').begins_with(
+                    '19')
+            },
+            # Gets all trademarks during the 2000s
+            {
+                "IndexName": 'fast-code-date_filed-index',
+                "KeyConditionExpression": Key('code').eq(code) & Key('date_filed').begins_with(
+                    '200')
+            },
+            # Gets all trademarks during the 2010s
+            {
+                "IndexName": 'fast-code-date_filed-index',
+                "KeyConditionExpression": Key('code').eq(code) & Key('date_filed').begins_with(
+                    '201')
+            },
+            # Gets all trademarks during the 2020s
+            {
+                "IndexName": 'fast-code-date_filed-index',
+                "KeyConditionExpression": Key('code').eq(code) & Key('date_filed').begins_with(
+                    '202')
+            },
+        ]
 
         overallItems = []
 
-        i = 0
+        with ThreadPoolExecutor() as executor:
+            future_results = [executor.submit(self.query_dynamodb, query_param) for query_param in queries]
+
+        for future in future_results:
+            result = future.result()
+            if result is not None:
+                overallItems.extend(result)
+        print("Table queries done")
+
+        return overallItems
+
+    def query_dynamodb(self, query_param):
+        overallItems = []
         while True:
 
-            print("Number of table queries: ", i)
             try:
-                response = self.table.query(**query_params)
+                response = self.table.query(**query_param)
                 overallItems.extend(response['Items'])  # Extend rather than append to flatten the list
 
                 lastKey = response.get('LastEvaluatedKey', None)
@@ -130,16 +155,13 @@ class TrademarkDao:
                 if lastKey is None:
                     break
 
-                query_params["ExclusiveStartKey"] = lastKey
-                i += 1
+                query_param["ExclusiveStartKey"] = lastKey
 
             except Exception as e:
                 logger.error(e)
                 break
 
-        trademarks = [(item['serial_number'], item['code'], item['mark_identification']) for item in overallItems]
-
-        return trademarks
+        return [(item['serial_number'], item['code'], item['mark_identification']) for item in overallItems]
 
     """
     This will need to get moved around to be cleaner code, however each item in serial_numbers_and_codes
