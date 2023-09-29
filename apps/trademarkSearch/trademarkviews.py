@@ -26,8 +26,6 @@ def same_mark_search(request):
             return HttpResponse("Unauthorized", status=401)
 
         userInfo = authtokenDao.find_user_info_by_authtoken(request.headers.get('Authorization'))
-        # if (userInfo is None) or (not authtokenDao.verify_authtoken(userInfo[0], request.headers.get('Authorization'))):
-        #     return HttpResponse("Unauthorized", status=401)
 
         inputMark = request.GET.get('query')
         typeCode = request.GET.get('code')
