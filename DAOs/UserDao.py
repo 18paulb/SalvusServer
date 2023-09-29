@@ -54,3 +54,12 @@ class UserDao:
         salt = bcrypt.gensalt()
         hashed_password = bcrypt.hashpw(password, salt)
         return salt, hashed_password
+
+    def get_user_by_email(self, email):
+        response = self.table.get_item(
+            Key={
+                'email': email
+            }
+        )
+
+        return response.get('Item')
