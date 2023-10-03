@@ -3,12 +3,9 @@ import json
 from django.http import HttpResponse, JsonResponse
 
 from DAOs.SearchDao import SearchDao
-from DAOs.TrademarkDao import TrademarkDao
-from DAOs.UserDao import UserDao
 from DAOs.AuthtokenDao import AuthtokenDao
-import apps.trademarkSearch.textSimilarity as ts
 from salvusbackend.logger import logger
-from tasks import background_search_by_code
+from .tasks import background_search_by_code
 # from salvusbackend.transformer import classify_code, get_label_decoder
 from apps.trademarkSearch.datacleaning import download_and_process_files, get_training_data
 import os
