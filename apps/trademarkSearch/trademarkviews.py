@@ -36,7 +36,7 @@ def same_mark_search(request):
 
     except Exception as e:
         logger.error(e)
-        return HttpResponse("An error has occurred", status=500)
+        return HttpResponse("An error has occurred during same mark search", status=500)
 
 
 # This code does entire process of downloading, cleaning, and inserting into database, uncomment as needed

@@ -49,8 +49,7 @@ def score_similar_trademarks(trademarks: list, inputText: str):
         infringementDict[key] = min_max_scale(infringementDict[key], min_value, max_value)
 
     # Now we sort the dict so that the trademarks with the highest score are first
-    sorted_infringementDict = {k: v for k, v in
-                               sorted(infringementDict.items(), key=lambda tmpItem: tmpItem[1], reverse=True)}
+    sorted_infringementDict = {k: v for k, v in sorted(infringementDict.items(), key=lambda tmpItem: tmpItem[1], reverse=True)}
 
     list_sorted_infringement = list(sorted_infringementDict.items())
 
