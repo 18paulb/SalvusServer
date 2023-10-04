@@ -41,3 +41,5 @@ gunicorn
 whitenoise
 decouple
 python-dotenv
+redis
+celery

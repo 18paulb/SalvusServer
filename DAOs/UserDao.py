@@ -17,13 +17,10 @@ class UserDao:
     def register_user(self, email, password, companyName):
         hashedPassword = self.hash_password(password)
         try:
-            userId = str(uuid.uuid4())
             self.table.put_item(
                 Item={
                     "email": email,
-                    "userId": userId,
                     "company_name": companyName,
-
                     "userAuthentication": {
                         "password": hashedPassword,
                     }

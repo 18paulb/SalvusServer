@@ -7,3 +7,4 @@ file.log
 .DS_Store
 model_training_data.json
 apps/trademarkSearch/result
+dump.rdb
