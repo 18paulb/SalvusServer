@@ -5,11 +5,6 @@ from DAOs.TrademarkDao import TrademarkDao
 import apps.trademarkSearch.textSimilarity as ts
 
 
-def start_search_code_task(search_code):
-    result = tasks.background_search_by_code(search_code)
-    return JsonResponse({'task_id': str(result.id)})
-
-
 def check_task_status(request):
     task_id = request.GET.get('task_id')
     inputMark = request.GET.get('query')
