@@ -21,6 +21,7 @@ def main():
     from django.conf import settings
     if settings.DEBUG:
         start_redis()  # Only start Redis if DEBUG is True
+        subprocess.Popen(["celery", "-A", "salvusbackend", "worker", "--loglevel=info"])
 
     try:
         from django.core.management import execute_from_command_line
