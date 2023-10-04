@@ -18,10 +18,10 @@ def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'salvusbackend.settings')
 
     # This makes it so that a redis-server should only start locally, if on production, there should already be one running
-    from django.conf import settings
-    if settings.DEBUG:
-        start_redis()  # Only start Redis if DEBUG is True
-        subprocess.Popen(["celery", "-A", "salvusbackend", "worker", "--loglevel=info"])
+    # from django.conf import settings
+    # if settings.DEBUG:
+    #     start_redis()  # Only start Redis if DEBUG is True
+    #     subprocess.Popen(["celery", "-A", "salvusbackend", "worker", "--loglevel=info"])
 
     try:
         from django.core.management import execute_from_command_line
